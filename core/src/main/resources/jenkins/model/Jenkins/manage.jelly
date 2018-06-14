@@ -69,7 +69,7 @@ THE SOFTWARE.
             </j:when>
             <j:when test="${m.requiresPOST}">
               <f:link href="${m.urlName}" post="${m.requiresPOST}">
-                <img class="icon" src="${iconUrl}" alt="${alt}"/>
+                <img class="icon" src="${iconUrl}" alt="[${%alt}]"/>
                 <dl>
                   <dt>${m.displayName}</dt>
                   <dd><j:out value="${m.description}"/></dd>
