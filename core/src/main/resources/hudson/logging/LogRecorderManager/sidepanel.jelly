@@ -30,7 +30,7 @@ THE SOFTWARE.
   <l:header />
   <l:side-panel>
     <l:tasks>
-      <l:task href="${rootURL}/" icon="icon-up icon-md" title="${%Back to Dashboard}"/>
+      <l:task href="${rootURL}/" icon="icon-up icon-md" alt="${%up.alt}" title="${%Back to Dashboard}"/>
       <l:task href="${rootURL}/manage" icon="icon-gear2 icon-md" title="${%Manage Jenkins}"/>
       <l:task href="." icon="icon-clipboard icon-md" title="${%Logger List}"/>
       <l:task href="all" icon="icon-notepad icon-md" title="${%All Logs}"/>

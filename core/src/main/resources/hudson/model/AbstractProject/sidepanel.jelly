@@ -39,10 +39,10 @@ THE SOFTWARE.
       <j:set var="url" value="${h.getNearestAncestorUrl(request,it)}"/>
       <j:choose>
         <j:when test="${it.parent==app}">
-          <l:task contextMenu="false" href="${rootURL}/" icon="icon-up icon-md" title="${%Back to Dashboard}"/>
+          <l:task contextMenu="false" href="${rootURL}/" icon="icon-up icon-md" alt="${%up.alt}" title="${%Back to Dashboard}"/>
         </j:when>
         <j:otherwise>
-          <l:task contextMenu="false" href="${rootURL}/${it.parent.url}" icon="icon-up icon-md" title="${%Up}"/>
+          <l:task contextMenu="false" href="${rootURL}/${it.parent.url}" icon="icon-up icon-md" alt="${%up.alt}" title="${%Up}"/>
         </j:otherwise>
       </j:choose>
       <l:task contextMenu="false" href="${url}/" icon="icon-search icon-md" title="${%Status}"/>
