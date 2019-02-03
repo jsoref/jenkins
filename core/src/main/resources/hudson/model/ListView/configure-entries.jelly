@@ -37,8 +37,8 @@ THE SOFTWARE.
     </select>
   </f:entry>
   
-  <f:entry title="${%Recurse in subfolders}" field="recurse">
-    <f:checkbox id="recurse"/>
+  <f:entry>
+    <f:checkbox title="${%Recurse in subfolders}" field="recurse" id="recurse" />
   </f:entry>
 
   <f:entry title="${%Jobs}">
