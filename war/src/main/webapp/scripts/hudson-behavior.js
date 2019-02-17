@@ -670,6 +670,17 @@ function inputHasDefaultTextOnBlur() {
     }
 }
 
+function labelAttachPreviousOnClick() {
+    var e = $(this).previous();
+    while (e!=null) {
+        if (e.tagName=="INPUT") {
+            e.click();
+            break;
+        }
+        e = e.previous();
+    }
+}
+
 // figure out the corresponding end marker
 function findEnd(e) {
     for( var depth=0; ; e=$(e).next()) {
@@ -740,17 +751,7 @@ var jenkinsRules = [
 
 // <label> that doesn't use ID, so that it can be copied in <repeatable>
     {"LABEL.attach-previous" : function(e) {
-        e.onclick = function() {
-            var e = $(this).previous();
-            while (e!=null) {
-                if (e.tagName=="INPUT") {
-                    e.click();
-                    break;
-                }
-                e = e.previous();
-            }
-        }
-        e = null;
+        e.onclick = labelAttachPreviousOnClick;
     }},
 
 // form fields that are validated via AJAX call to the server
