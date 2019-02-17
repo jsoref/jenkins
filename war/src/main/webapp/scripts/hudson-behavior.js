@@ -647,6 +647,15 @@ function progressBarOnClick() {
     if(href!=null)      window.location = href;
 }
 
+function expandButton(e) {
+    var link = e.target;
+    while(!Element.hasClassName(link,"advancedLink"))
+        link = link.parentNode;
+    link.style.display = "none";
+    $(link).next().style.display="block";
+    layoutUpdateCallback.call();
+}
+
 // figure out the corresponding end marker
 function findEnd(e) {
     for( var depth=0; ; e=$(e).next()) {
@@ -704,15 +713,7 @@ var jenkinsRules = [
     }},
 
     {"INPUT.expand-button" : function(e) {
-        makeButton(e,function(e) {
-            var link = e.target;
-            while(!Element.hasClassName(link,"advancedLink"))
-                link = link.parentNode;
-            link.style.display = "none";
-            $(link).next().style.display="block";
-            layoutUpdateCallback.call();
-        });
-        e = null; // avoid memory leak
+        makeButton(e, expandButton);
     }},
 
 // scripting for having default value in the input field
