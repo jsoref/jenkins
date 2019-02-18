@@ -43,13 +43,13 @@ THE SOFTWARE.
       <local:tabBar page="installed" xmlns:local="/hudson/PluginManager" />
 
       <div class="pane-frame">
-        <div class="plugins i18n" 
-             data-cannot-enable="${%This plugin cannot be enabled}" 
-             data-cannot-disable="${%This plugin cannot be disabled}" 
-             data-cannot-uninstall="${%This plugin cannot be uninstalled}" 
-             data-disabled-dependencies="${%It has one or more disabled dependencies}" 
-             data-enabled-dependents="${%It has one or more enabled dependents}" 
-             data-installed-dependents="${%It has one or more installed dependents}" 
+        <div class="plugins i18n"
+             data-cannot-enable="${%This plugin cannot be enabled}"
+             data-cannot-disable="${%This plugin cannot be disabled}"
+             data-cannot-uninstall="${%This plugin cannot be uninstalled}"
+             data-disabled-dependencies="${%It has one or more missing dependencies}"
+             data-enabled-dependents="${%It has one or more enabled dependants}"
+             data-installed-dependents="${%It has one or more installed dependants}" 
         />
         <table id="plugins" class="pane bigtable sortable stripped-odd">
           <j:choose>
