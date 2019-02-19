@@ -754,6 +754,7 @@ public abstract class Descriptor<T extends Describable<T>> implements Saveable, 
             try {
                 if(Stapler.getCurrentRequest().getView(c,"help"+suffix)!=null)
                     return page;
+                LOGGER.log(Level.FINER, "Help tried {0} -> {1}", new Object[] {suffix, page});
             } catch (IOException e) {
                 throw new Error(e);
             }
