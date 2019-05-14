@@ -45,16 +45,7 @@ public class AntWithFindResourceClassLoader extends AntClassLoader implements Cl
 
         // try and load from this loader if the parent either didn't find
         // it or wasn't consulted.
-        Enumeration e = pathComponents.elements();
-        while (e.hasMoreElements() && url == null) {
-            File pathComponent = (File) e.nextElement();
-            url = getResourceURL(pathComponent, name);
-            if (url != null) {
-                log("Resource " + name + " loaded from ant loader", Project.MSG_DEBUG);
-            }
-        }
-
-        return url;
+        return getUrl(pathComponents, name, url);
     }
 
 }
