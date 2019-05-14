@@ -991,8 +991,7 @@ table.parameters > tbody:hover {
 #buildHistoryPageNav .nav {
   width: 16px;
   height: 16px;
-  background: no-repeat;
-  background-position: center;
+  background: no-repeat center;
   background-size: 16px 16px;
   margin: 4px 2px;
   cursor: pointer;
