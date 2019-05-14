@@ -19,7 +19,7 @@
     background: #e23635;
 }
 #visible-am-container.visible #visible-am-button {
-    box-shadow: inset 0px 1px 14px rgba(0,0,0,.5);
+    box-shadow: inset 0 1px 14px rgba(0,0,0,.5);
 }
 #visible-am-container div#visible-am-list {
     position: absolute;

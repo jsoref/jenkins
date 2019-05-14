@@ -55,7 +55,7 @@ body {
 
 #jenkins-head-icon {
   position: absolute;
-  bottom: 0px;
+  bottom: 0;
 }
 
 #jenkins-name-icon {

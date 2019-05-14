@@ -3,5 +3,5 @@ A.section-anchor {
     top: -2em;
     visibility: hidden;
     display: inline-block;
-    width: 0px;
+    width: 0;
 }

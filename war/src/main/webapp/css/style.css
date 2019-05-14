@@ -419,7 +419,7 @@ pre.console {
 }
 
 .pane-header, .pane-footer {
-  padding: 8px 0px;
+  padding: 8px 0;
   background-color: #eee;
   border: solid 1px #f3f3f3;
   border-left: none;
@@ -624,7 +624,7 @@ div.behavior-loading {
     width:100%;
     right: 0;
     top: 15px;
-    bottom: 0px;
+    bottom: 0;
     height: 100%;
     width: auto;
     min-height: 100%;
@@ -793,12 +793,12 @@ LABEL.attach-previous {
 /* ====================== project view tab bar ===================================== */
 #viewList {
   border: none;
-  margin-bottom: 0px;
+  margin-bottom: 0;
   width: 100%;
   white-space: nowrap;
 }
 #viewList td {
-  padding: 0px;
+  padding: 0;
 }
 #viewList td.inactive {
   border: solid 1px #ccc;
@@ -846,7 +846,7 @@ LABEL.attach-previous {
 }
 #projectstatus th {
   text-align: left;
-  padding: 7px 0px;
+  padding: 7px 0;
 }
 #projectstatus tbody tr:first-child th:first-child {
   border-top-left-radius: 4px;
@@ -948,7 +948,7 @@ table.parameters > tbody:hover {
 }
 #buildHistoryPage .build-search-row .clear {
     position: absolute;
-    padding: 0px 4px;
+    padding: 0 4px;
     cursor: pointer;
     top: 7px;
     right: 6px;
@@ -1113,7 +1113,7 @@ table.parameters > tbody:hover {
 }
 
 .build-row .build-row-cell .pane {
-  padding: 0px 2px; /* Sync changes with func expandControlsTo50Percent in hudson-behavior.js */
+  padding: 0 2px; /* Sync changes with func expandControlsTo50Percent in hudson-behavior.js */
   display: inline-block;
   overflow: hidden;
 }
@@ -1357,7 +1357,7 @@ TABLE.fingerprint-in-build TD {
 }
 
 #plugins .plugin-dependency-info span {
-    margin: 5px 5px 0px 0px;
+    margin: 5px 5px 0 0;
     background-color: #337ab7;
     display: inline-block;
     padding: .2em .6em .3em;
@@ -1465,7 +1465,7 @@ DIV.yahooTree td {
 
 #jenkins .yuimenu .bd {
     border: 1px solid #ccc;
-    box-shadow: 0px 3px 10px #bbb;
+    box-shadow: 0 3px 10px #bbb;
 }
 
 #jenkins .yui-menu-shadow {
@@ -1627,7 +1627,7 @@ table.progress-bar.red td.progress-bar-done {
     width:100%;
     position:fixed;
     text-align:center;
-    left:0px;
+    left:0;
     font-size: 2em;
     z-index:1000;
     border-bottom: 1px solid black;
@@ -1791,7 +1791,7 @@ select.select-ajax-pending {
 #jenkins .yui-button button:active,
 #jenkins .yui-button .active {
     background-color: #bbb;
-    box-shadow: inset 0px 1px 6px 2px #929292;
+    box-shadow: inset 0 1px 6px 2px #929292;
     border: 1px solid #bbb;
 }
 
@@ -1825,7 +1825,7 @@ select.select-ajax-pending {
 {
     background-color: #33505f;
     border: 1px solid #3f6275;
-    box-shadow: inset 0px 1px 6px 2px #1b2b33;
+    box-shadow: inset 0 1px 6px 2px #1b2b33;
 }
 
 #jenkins .yui-button.primary button:disabled,
@@ -1854,7 +1854,7 @@ select.select-ajax-pending {
 {
     background-color: #942e22;
     border: 1px solid #6b2118;
-    box-shadow: inset 0px 1px 6px 2px #79251b;
+    box-shadow: inset 0 1px 6px 2px #79251b;
 }
 
 #jenkins .yui-button.danger button:disabled,
