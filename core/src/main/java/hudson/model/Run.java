@@ -948,17 +948,21 @@ public abstract class Run <JobT extends Job<JobT,RunT>,RunT extends Run<JobT,Run
      * @since 1.383
      */  
     public @Nonnull List<RunT> getPreviousBuildsOverThreshold(int numberOfBuilds, @Nonnull Result threshold) {
-        List<RunT> builds = new ArrayList<>(numberOfBuilds);
-        
         RunT r = getPreviousBuild();
+        return getBuildsOverThreshold(r, numberOfBuilds, threshold);
+    }
+
+    protected @Nonnull List<RunT> getBuildsOverThreshold(RunT r, int numberOfBuilds, @Nonnull Result threshold) {
+        List<RunT> builds = new ArrayList<>(numberOfBuilds);
+
         while (r != null && builds.size() < numberOfBuilds) {
-            if (!r.isBuilding() && 
+            if (!r.isBuilding() &&
                  (r.getResult() != null && r.getResult().isBetterOrEqualTo(threshold))) {
                 builds.add(r);
             }
             r = r.getPreviousBuild();
         }
-        
+
         return builds;
     }
 
