@@ -40,7 +40,6 @@ import hudson.model.PeriodicWork;
 import hudson.model.Project;
 import hudson.model.TopLevelItem;
 import hudson.model.TopLevelItemDescriptor;
-import hudson.scheduler.CronTab;
 import hudson.scheduler.CronTabList;
 
 import java.io.InvalidObjectException;

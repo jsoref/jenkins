@@ -37,8 +37,6 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.text.IsEmptyString.isEmptyString;
 import static org.hamcrest.xml.HasXPath.hasXPath;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 
 public class TokenBasedRememberMeServices2Test {
 

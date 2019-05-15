@@ -2,8 +2,6 @@ package hudson.model;
 
 import static org.junit.Assert.*;
 
-import java.lang.reflect.Method;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +15,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import hudson.EnvVars;
 import hudson.Platform;
-import hudson.util.ReflectionUtils;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ Node.class, Platform.class })
