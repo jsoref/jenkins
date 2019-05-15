@@ -250,7 +250,7 @@ public class ViewOptionHandlerTest {
             return ex.getMessage();
         }
 
-        fail("No exception thrown. Expected " + type.getClass());
+        fail("No exception thrown. Expected " + type);
         return null;
     }
 
