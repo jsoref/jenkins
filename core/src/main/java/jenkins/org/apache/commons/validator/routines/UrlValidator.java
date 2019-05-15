@@ -91,6 +91,7 @@ public class UrlValidator implements Serializable {
      * Allows all validly formatted schemes to pass validation instead of
      * supplying a set of valid schemes.
      */
+    @SuppressWarnings("PointlessBitwiseExpression")
     public static final long ALLOW_ALL_SCHEMES = 1 << 0;
     
     /**
