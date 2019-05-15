@@ -1945,7 +1945,7 @@ public class Functions {
 
     public static ArrayList<CLICommand> getCLICommands() {
         ArrayList<CLICommand> all = new ArrayList<>(CLICommand.all());
-        Collections.sort(all, (cliCommand, cliCommand1) -> cliCommand.getName().compareTo(cliCommand1.getName()));
+        all.sort((cliCommand, cliCommand1) -> cliCommand.getName().compareTo(cliCommand1.getName()));
         return all;
     }
 

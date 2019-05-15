@@ -152,7 +152,7 @@ public class UsageStatisticsTest {
     // Plugins can be retrieved in any order, so sorting them so that the test is stable
     private List<JSONObject> sortPlugins(List<JSONObject> list) {
         List<JSONObject> sorted = new ArrayList<>(list);
-        Collections.sort(sorted, (j1, j2) -> j1.getString("name").compareTo(j2.getString("name")));
+        sorted.sort((j1, j2) -> j1.getString("name").compareTo(j2.getString("name")));
         return sorted;
     }
 
