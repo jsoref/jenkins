@@ -89,7 +89,7 @@ public class UsageStatisticsTest {
 
         byte[] cipherText = Base64.getDecoder().decode(data.getBytes(StandardCharsets.UTF_8));
         InputStreamReader r = new InputStreamReader(new GZIPInputStream(
-                new CombinedCipherInputStream(new ByteArrayInputStream(cipherText),priv,"AES")), "UTF-8");
+                new CombinedCipherInputStream(new ByteArrayInputStream(cipherText),priv,"AES")), StandardCharsets.UTF_8);
         JSONObject o = JSONObject.fromObject(IOUtils.toString(r));
         Jenkins jenkins = Jenkins.getActiveInstance();
         // A bit intrusive with UsageStatistics internals, but done to prevent undetected changes

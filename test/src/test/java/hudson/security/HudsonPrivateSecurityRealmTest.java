@@ -41,6 +41,7 @@ import static hudson.security.HudsonPrivateSecurityRealm.PASSWORD_ENCODER;
 import hudson.security.pages.SignupPage;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -201,7 +202,7 @@ public class HudsonPrivateSecurityRealmTest {
 
     private static String basicHeader(String user, String pass) throws UnsupportedEncodingException {
         String str = user +':' + pass;
-        String auth = Base64.encode(str.getBytes("US-ASCII"));
+        String auth = Base64.encode(str.getBytes(StandardCharsets.US_ASCII));
         String authHeader = "Basic " + auth;
         return authHeader;
     }

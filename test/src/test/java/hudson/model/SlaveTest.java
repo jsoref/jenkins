@@ -40,6 +40,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.CheckForNull;
@@ -107,7 +108,7 @@ public class SlaveTest {
         con.setRequestProperty("Content-Type", "application/xml;charset=UTF-8");
         con.setRequestProperty(CrumbIssuer.DEFAULT_CRUMB_NAME, "test");
         con.setDoOutput(true);
-        con.getOutputStream().write(xml.getBytes("UTF-8"));
+        con.getOutputStream().write(xml.getBytes(StandardCharsets.UTF_8));
         con.getOutputStream().close();
         IOUtils.copy(con.getInputStream(), System.out);
     }

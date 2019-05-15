@@ -12,6 +12,8 @@ import java.net.InetAddress;
 import java.io.StringReader;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
+
 import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
@@ -85,7 +87,7 @@ public class UDPBroadcastThreadTest {
     private void receiveAndVerify(DatagramSocket s) throws IOException, SAXException, ParserConfigurationException {
         DatagramPacket p = new DatagramPacket(new byte[1024],1024);
         s.receive(p);
-        String xml = new String(p.getData(), 0, p.getLength(), "UTF-8");
+        String xml = new String(p.getData(), 0, p.getLength(), StandardCharsets.UTF_8);
         System.out.println(xml);
 
         // make sure at least this XML parses

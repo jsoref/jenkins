@@ -38,6 +38,7 @@ import hudson.security.ACL;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import jenkins.model.Jenkins;
 import jenkins.security.apitoken.ApiTokenPropertyConfiguration;
@@ -246,7 +247,7 @@ public class ItemsTest {
                 CLICommand cmd = new CreateJobCommand();
                 CLICommandInvoker invoker = new CLICommandInvoker(r, cmd);
                 cmd.setTransportAuth(User.get("attacker").impersonate());
-                int status = invoker.withStdin(new ByteArrayInputStream("<project/>".getBytes("US-ASCII"))).invokeWithArgs(target).returnCode();
+                int status = invoker.withStdin(new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.US_ASCII))).invokeWithArgs(target).returnCode();
                 if (status != 0) {
                     throw new AbortException("CLI command failed with status " + status);
                 }

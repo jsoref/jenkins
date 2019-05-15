@@ -29,6 +29,8 @@ import static hudson.cli.CLICommandInvoker.Matcher.succeededSilently;
 import hudson.model.Item;
 import hudson.model.User;
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+
 import jenkins.model.Jenkins;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
@@ -54,9 +56,9 @@ public class CreateJobCommandTest {
             grant(Item.READ).onItems(d).toAuthenticated(). // including alice
             grant(Item.CREATE).onItems(d).to("bob"));
         cmd.setTransportAuth(User.get("alice").impersonate());
-        assertThat(invoker.withStdin(new ByteArrayInputStream("<project/>".getBytes("US-ASCII"))).invokeWithArgs("d/p"), failedWith(6));
+        assertThat(invoker.withStdin(new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.US_ASCII))).invokeWithArgs("d/p"), failedWith(6));
         cmd.setTransportAuth(User.get("bob").impersonate());
-        assertThat(invoker.withStdin(new ByteArrayInputStream("<project/>".getBytes("US-ASCII"))).invokeWithArgs("d/p"), succeededSilently());
+        assertThat(invoker.withStdin(new ByteArrayInputStream("<project/>".getBytes(StandardCharsets.US_ASCII))).invokeWithArgs("d/p"), succeededSilently());
         assertNotNull(d.getItem("p"));
     }
 
