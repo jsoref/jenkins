@@ -1101,10 +1101,10 @@ public class Functions {
         }
 
         Item i=p;
-        String url = "";
+        StringBuilder url = new StringBuilder();
         while(true) {
             ItemGroup ig = i.getParent();
-            url = i.getShortUrl()+url;
+            url.insert(0, i.getShortUrl());
 
             if(ig== Jenkins.getInstance() || (view != null && ig == view.getOwner().getItemGroup())) {
                 assert i instanceof TopLevelItem;

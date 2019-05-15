@@ -54,14 +54,14 @@ public class ProcTest {
 
         RemoteLauncher launcher = new RemoteLauncher(StreamTaskListener.NULL, ch, true);
 
-        String str="";
+        StringBuilder str= new StringBuilder();
         for (int i=0; i<256; i++)
-            str += "oxox";
+            str.append("oxox");
 
         for (int i=0; i<1000; i++) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            launcher.launch().cmds("echo",str).stdout(baos).join();
-            assertEquals(str, baos.toString().trim());
+            launcher.launch().cmds("echo", str.toString()).stdout(baos).join();
+            assertEquals(str.toString(), baos.toString().trim());
         }
 
         ch.close();
