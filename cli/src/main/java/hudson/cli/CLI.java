@@ -40,6 +40,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -223,7 +224,7 @@ public class CLI {
         }
 
         if(args.isEmpty())
-            args = Arrays.asList("help"); // default to help
+            args = Collections.singletonList("help"); // default to help
 
         if (tryLoadPKey && !provider.hasKeys())
             provider.readFromDefaultLocations();
