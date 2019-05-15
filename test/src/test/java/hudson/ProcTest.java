@@ -45,15 +45,12 @@ public class ProcTest {
         final Pipe p = Pipe.createRemoteToLocal();
         for (int i=0; i<10; i++)
             ch.callAsync(new ChannelFiller(p.getOut()));
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    IOUtils.drain(p.getIn());
-                } catch (IOException e) {
-                }
+        new Thread(() -> {
+            try {
+                IOUtils.drain(p.getIn());
+            } catch (IOException e) {
             }
-        }.start();
+        }).start();
 
         RemoteLauncher launcher = new RemoteLauncher(StreamTaskListener.NULL, ch, true);
 

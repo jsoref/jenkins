@@ -1514,63 +1514,57 @@ public abstract class PluginManager extends AbstractModelObject implements OnMas
         if (!Jenkins.getInstance().getInstallState().isSetupComplete()) {
             jenkins.setInstallState(InstallState.INITIAL_PLUGINS_INSTALLING);
             updateCenter.persistInstallStatus();
-            new Thread() {
-                @Override
-                public void run() {
-                    boolean failures = false;
-                    INSTALLING: while (true) {
-                        try {
-                            updateCenter.persistInstallStatus();
-                            Thread.sleep(500);
-                            failures = false;
-                            for (Future<UpdateCenter.UpdateCenterJob> jobFuture : installJobs) {
-                                if(!jobFuture.isDone() && !jobFuture.isCancelled()) {
-                                    continue INSTALLING;
-                                }
-                                UpdateCenter.UpdateCenterJob job = jobFuture.get();
-                                if(job instanceof InstallationJob && ((InstallationJob)job).status instanceof DownloadJob.Failure) {
-                                    failures = true;
-                                }
+            new Thread(() -> {
+                boolean failures = false;
+                INSTALLING: while (true) {
+                    try {
+                        updateCenter.persistInstallStatus();
+                        Thread.sleep(500);
+                        failures = false;
+                        for (Future<UpdateCenter.UpdateCenterJob> jobFuture : installJobs) {
+                            if(!jobFuture.isDone() && !jobFuture.isCancelled()) {
+                                continue INSTALLING;
                             }
-                        } catch (Exception e) {
-                            LOGGER.log(WARNING, "Unexpected error while waiting for initial plugin set to install.", e);
+                            UpdateCenter.UpdateCenterJob job = jobFuture.get();
+                            if(job instanceof InstallationJob && ((InstallationJob)job).status instanceof DownloadJob.Failure) {
+                                failures = true;
+                            }
                         }
-                        break;
+                    } catch (Exception e) {
+                        LOGGER.log(WARNING, "Unexpected error while waiting for initial plugin set to install.", e);
                     }
-                    updateCenter.persistInstallStatus();
-                    if(!failures) {
-                        try (ACLContext acl = ACL.as(currentAuth)) {
-                            InstallUtil.proceedToNextStateFrom(InstallState.INITIAL_PLUGINS_INSTALLING);
-                        }
+                    break;
+                }
+                updateCenter.persistInstallStatus();
+                if(!failures) {
+                    try (ACLContext acl = ACL.as(currentAuth)) {
+                        InstallUtil.proceedToNextStateFrom(InstallState.INITIAL_PLUGINS_INSTALLING);
                     }
                 }
-            }.start();
+            }).start();
         }
         
         // Fire a one-off thread to wait for the plugins to be deployed and then
         // refresh the dependent plugins list.
-        new Thread() {
-            @Override
-            public void run() {
-                INSTALLING: while (true) {
-                    for (Future<UpdateCenter.UpdateCenterJob> deployJob : installJobs) {
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            LOGGER.log(SEVERE, "Unexpected error while waiting for some plugins to install. Plugin Manager state may be invalid. Please restart Jenkins ASAP.", e);
-                        }
-                        if (!deployJob.isCancelled() && !deployJob.isDone()) {
-                            // One of the plugins is not installing/canceled, so
-                            // go back to sleep and try again in a while.
-                            continue INSTALLING;
-                        }
+        new Thread(() -> {
+            INSTALLING: while (true) {
+                for (Future<UpdateCenter.UpdateCenterJob> deployJob : installJobs) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        LOGGER.log(SEVERE, "Unexpected error while waiting for some plugins to install. Plugin Manager state may be invalid. Please restart Jenkins ASAP.", e);
                     }
-                    // All the plugins are installed. It's now safe to refresh.
-                    resolveDependentPlugins();
-                    break;
+                    if (!deployJob.isCancelled() && !deployJob.isDone()) {
+                        // One of the plugins is not installing/canceled, so
+                        // go back to sleep and try again in a while.
+                        continue INSTALLING;
+                    }
                 }
+                // All the plugins are installed. It's now safe to refresh.
+                resolveDependentPlugins();
+                break;
             }
-        }.start();
+        }).start();
         
     }
 
