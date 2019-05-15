@@ -86,9 +86,8 @@ public class LastGrantedAuthoritiesPropertyTest {
             if (password.equals("error"))
                 throw new BadCredentialsException(username);
             String[] desiredAuthorities = password.split(":");
-            List<GrantedAuthority> authorities = Arrays.stream(desiredAuthorities).map(GrantedAuthorityImpl::new).collect(Collectors.toList());
 
-            return new User(username, "", true, authorities.toArray(new GrantedAuthority[0]));
+            return new User(username, "", true, Arrays.stream(desiredAuthorities).map(GrantedAuthorityImpl::new).toArray(GrantedAuthority[]::new));
         }
 
         @Override
