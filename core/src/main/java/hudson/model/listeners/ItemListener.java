@@ -23,15 +23,17 @@
  */
 package hudson.model.listeners;
 
-import com.google.common.base.Function;
-import hudson.ExtensionPoint;
-import hudson.ExtensionList;
 import hudson.Extension;
+import hudson.ExtensionList;
+import hudson.ExtensionPoint;
 import hudson.model.Failure;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
 import hudson.model.Items;
 import hudson.security.ACL;
+import jenkins.model.Jenkins;
+
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,7 +48,7 @@ public class ItemListener implements ExtensionPoint {
     private static final Logger LOGGER = Logger.getLogger(ItemListener.class.getName());
 
     /**
-     * Called after a new job is created and added to {@link jenkins.model.Jenkins},
+     * Called after a new job is created and added to {@link Jenkins},
      * before the initial configuration page is provided.
      * <p>
      * This is useful for changing the default initial configuration of newly created jobs.
@@ -87,7 +89,7 @@ public class ItemListener implements ExtensionPoint {
     }
 
     /**
-     * Called after all the jobs are loaded from disk into {@link jenkins.model.Jenkins}
+     * Called after all the jobs are loaded from disk into {@link Jenkins}
      * object.
      */
     public void onLoaded() {
@@ -172,7 +174,7 @@ public class ItemListener implements ExtensionPoint {
     }
 
     // TODO JENKINS-21224 generalize this to a method perhaps in ExtensionList and use consistently from all listeners
-    private static void forAll(final /* java.util.function.Consumer<ItemListener> */Function<ItemListener,Void> consumer) {
+    private static void forAll(final /* java.util.function.Consumer<ItemListener> */Function<ItemListener, Void> consumer) {
         for (ItemListener l : all()) {
             try {
                 consumer.apply(l);

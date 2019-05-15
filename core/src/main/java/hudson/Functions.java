@@ -25,9 +25,6 @@
  */
 package hudson;
 
-import hudson.model.Slave;
-import hudson.security.*;
-import jenkins.util.SystemProperties;
 import hudson.cli.CLICommand;
 import hudson.console.ConsoleAnnotationDescriptor;
 import hudson.console.ConsoleAnnotatorFactory;
@@ -47,17 +44,24 @@ import hudson.model.JobPropertyDescriptor;
 import hudson.model.ModelObject;
 import hudson.model.Node;
 import hudson.model.PageDecorator;
-import jenkins.model.SimplePageDecorator;
 import hudson.model.PaneStatusProperties;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterDefinition.ParameterDescriptor;
+import hudson.model.PasswordParameterDefinition;
 import hudson.model.Run;
+import hudson.model.Slave;
 import hudson.model.TopLevelItem;
 import hudson.model.User;
 import hudson.model.View;
 import hudson.scm.SCM;
 import hudson.scm.SCMDescriptor;
 import hudson.search.SearchableModelObject;
+import hudson.security.ACL;
+import hudson.security.AccessControlled;
+import hudson.security.AuthorizationStrategy;
+import hudson.security.GlobalSecurityConfiguration;
+import hudson.security.Permission;
+import hudson.security.SecurityRealm;
 import hudson.security.captcha.CaptchaSupport;
 import hudson.security.csrf.CrumbIssuer;
 import hudson.slaves.Cloud;
@@ -76,14 +80,48 @@ import hudson.util.FormValidation.CheckMethod;
 import hudson.util.HudsonIsLoading;
 import hudson.util.HudsonIsRestarting;
 import hudson.util.Iterators;
-import hudson.util.jna.GNUCLibrary;
+import hudson.util.RunList;
 import hudson.util.Secret;
+import hudson.util.jna.GNUCLibrary;
 import hudson.views.MyViewsTabBar;
 import hudson.views.ViewsTabBar;
 import hudson.widgets.RenderOnDemandClosure;
+import jenkins.model.GlobalConfiguration;
+import jenkins.model.GlobalConfigurationCategory;
+import jenkins.model.Jenkins;
+import jenkins.model.ModelObjectWithChildren;
+import jenkins.model.ModelObjectWithContextMenu;
+import jenkins.model.SimplePageDecorator;
+import jenkins.util.SystemProperties;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.jelly.JellyContext;
+import org.apache.commons.jelly.JellyTagException;
+import org.apache.commons.jelly.Script;
+import org.apache.commons.jelly.XMLOutput;
+import org.apache.commons.jexl.parser.ASTSizeFunction;
+import org.apache.commons.jexl.util.Introspector;
+import org.apache.commons.lang.StringUtils;
+import org.jenkins.ui.icon.IconSet;
+import org.jvnet.tiger_types.Types;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.DoNotUse;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
+import org.kohsuke.stapler.Ancestor;
+import org.kohsuke.stapler.Stapler;
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.jelly.InternationalizedStringExpression.RawHtmlArgument;
 
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
@@ -110,59 +148,21 @@ import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Pattern;
-
-import javax.annotation.Nullable;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import jenkins.model.GlobalConfiguration;
-import jenkins.model.GlobalConfigurationCategory;
-import jenkins.model.Jenkins;
-import jenkins.model.ModelObjectWithChildren;
-import jenkins.model.ModelObjectWithContextMenu;
-
-import org.apache.commons.jelly.JellyContext;
-import org.apache.commons.jelly.JellyTagException;
-import org.apache.commons.jelly.Script;
-import org.apache.commons.jelly.XMLOutput;
-import org.apache.commons.jexl.parser.ASTSizeFunction;
-import org.apache.commons.jexl.util.Introspector;
-import org.apache.commons.lang.StringUtils;
-import org.jenkins.ui.icon.IconSet;
-import org.jvnet.tiger_types.Types;
-import org.kohsuke.stapler.Ancestor;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
-import org.kohsuke.stapler.jelly.InternationalizedStringExpression.RawHtmlArgument;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import hudson.model.PasswordParameterDefinition;
-import hudson.util.RunList;
-import java.io.PrintStream;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import org.apache.commons.io.IOUtils;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
-import org.kohsuke.accmod.restrictions.DoNotUse;
 
 /**
  * Utility functions used in views.
@@ -391,7 +391,7 @@ public class Functions {
      * </pre>
      *
      * <p>
-     * The head portion is the part of the URL from the {@link jenkins.model.Jenkins}
+     * The head portion is the part of the URL from the {@link Jenkins}
      * object to the first {@link Run} subtype. When "next/prev build"
      * is chosen, this part remains intact.
      *
@@ -471,7 +471,7 @@ public class Functions {
     /**
      * Gets the system property indicated by the specified key.
      * 
-     * Delegates to {@link SystemProperties#getString(java.lang.String)}.
+     * Delegates to {@link SystemProperties#getString(String)}.
      */
     @Restricted(DoNotUse.class)
     public static String getSystemProperty(String key) {
@@ -1001,7 +1001,7 @@ public class Functions {
             Descriptor d = c.getInstance();
             if (d.getGlobalConfigPage()==null)  continue;
 
-            if (predicate.apply(d.getCategory())) {
+            if (predicate.test(d.getCategory())) {
                 r.add(new Tag(c.ordinal(), d));
             }
         }
@@ -1017,7 +1017,7 @@ public class Functions {
      * Like {@link #getSortedDescriptorsForGlobalConfig(Predicate)} but with a constant truth predicate, to include all descriptors.
      */
     public static Collection<Descriptor> getSortedDescriptorsForGlobalConfig() {
-        return getSortedDescriptorsForGlobalConfig(Predicates.<GlobalConfigurationCategory>alwaysTrue());
+        return getSortedDescriptorsForGlobalConfig(globalConfigurationCategory -> true);
     }
 
     /**
@@ -1025,7 +1025,7 @@ public class Functions {
      */
     @Deprecated
     public static Collection<Descriptor> getSortedDescriptorsForGlobalConfigNoSecurity() {
-        return getSortedDescriptorsForGlobalConfig(Predicates.not(GlobalSecurityConfiguration.FILTER));
+        return getSortedDescriptorsForGlobalConfig(((Predicate<GlobalConfigurationCategory>) GlobalSecurityConfiguration.FILTER::test).negate());
     }
 
     /**

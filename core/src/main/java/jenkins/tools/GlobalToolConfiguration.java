@@ -23,17 +23,16 @@
  */
 package jenkins.tools;
 
-import com.google.common.base.Predicate;
 import hudson.Extension;
 import hudson.Functions;
 import hudson.model.Descriptor;
 import hudson.model.ManagementLink;
 import hudson.security.Permission;
 import hudson.util.FormApply;
+import jenkins.management.Messages;
 import jenkins.model.GlobalConfigurationCategory;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
-
 import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.StaplerRequest;
@@ -42,6 +41,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,12 +56,12 @@ public class GlobalToolConfiguration extends ManagementLink {
 
     @Override
     public String getDisplayName() {
-        return jenkins.management.Messages.ConfigureTools_DisplayName();
+        return Messages.ConfigureTools_DisplayName();
     }
 
     @Override
     public String getDescription() {
-        return jenkins.management.Messages.ConfigureTools_Description();
+        return Messages.ConfigureTools_Description();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class GlobalToolConfiguration extends ManagementLink {
         FormApply.success(req.getContextPath() + "/manage").generateResponse(req, rsp, null);
     }
 
-    private boolean configure(StaplerRequest req, JSONObject json) throws hudson.model.Descriptor.FormException, IOException {
+    private boolean configure(StaplerRequest req, JSONObject json) throws Descriptor.FormException, IOException {
         Jenkins j = Jenkins.getInstance();
         j.checkPermission(Jenkins.ADMINISTER);
 
