@@ -503,7 +503,7 @@ public abstract class ExtensionFinder implements ExtensionPoint {
                         c = c.getSuperclass();
                     }
                 } catch (Exception x) {
-                    throw (LinkageError)new LinkageError("Failed to resolve "+c).initCause(x);
+                    throw (LinkageError) new LinkageError("Failed to resolve "+c, x);
                 }
             }
 
