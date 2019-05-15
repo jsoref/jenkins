@@ -539,7 +539,7 @@ public class BeanBuilder extends GroovyObjectSupport {
 					}
 					else {
 						currentBeanConfig = springConfig.createSingletonBean(parameterType);
-						callable.call(null);
+						callable.call((Object[]) null);
 					}
 
 					value = currentBeanConfig.getBeanDefinition();
