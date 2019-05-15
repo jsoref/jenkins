@@ -29,12 +29,7 @@ public class Security380Test {
         Jenkins.getInstance().setSecurityRealm(j.createDummySecurityRealm());
 
         j.createFreeStyleProject();
-        ACL.impersonate(Jenkins.ANONYMOUS, new Runnable() {
-            @Override
-            public void run() {
-                Assert.assertEquals("no items", 0, Jenkins.getInstance().getItems().size());
-            }
-        });
+        ACL.impersonate(Jenkins.ANONYMOUS, () -> Assert.assertEquals("no items", 0, Jenkins.getInstance().getItems().size()));
     }
 
     @Issue("SECURITY-380")
@@ -47,12 +42,7 @@ public class Security380Test {
         Jenkins.getInstance().setSecurityRealm(j.createDummySecurityRealm());
 
         j.createFreeStyleProject();
-        ACL.impersonate(Jenkins.ANONYMOUS, new Runnable() {
-            @Override
-            public void run() {
-                Assert.assertEquals("one item", 1, Jenkins.getInstance().getItems().size());
-            }
-        });
+        ACL.impersonate(Jenkins.ANONYMOUS, () -> Assert.assertEquals("one item", 1, Jenkins.getInstance().getItems().size()));
     }
 
     @Issue("SECURITY-380")

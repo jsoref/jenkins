@@ -888,13 +888,10 @@ public /*transient*/ abstract class Computer extends Actionable implements Acces
             // we have too many executors
             // send signal to all idle executors to potentially kill them off
             // need the Queue maintenance lock held to prevent concurrent job assignment on the idle executors
-            Queue.withLock(new Runnable() {
-                @Override
-                public void run() {
-                    for( Executor e : executors )
-                        if(e.isIdle())
-                            e.interrupt();
-                }
+            Queue.withLock(() -> {
+                for( Executor e : executors )
+                    if(e.isIdle())
+                        e.interrupt();
             });
         }
 
@@ -1085,17 +1082,14 @@ public /*transient*/ abstract class Computer extends Actionable implements Acces
      * Called by {@link Executor} to kill excessive executors from this computer.
      */
     protected void removeExecutor(final Executor e) {
-        final Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                synchronized (Computer.this) {
-                    executors.remove(e);
-                    addNewExecutorIfNecessary();
-                    if (!isAlive()) {
-                        AbstractCIBase ciBase = Jenkins.getInstanceOrNull();
-                        if (ciBase != null) { // TODO confirm safe to assume non-null and use getInstance()
-                            ciBase.removeComputer(Computer.this);
-                        }
+        final Runnable task = () -> {
+            synchronized (Computer.this) {
+                executors.remove(e);
+                addNewExecutorIfNecessary();
+                if (!isAlive()) {
+                    AbstractCIBase ciBase = Jenkins.getInstanceOrNull();
+                    if (ciBase != null) { // TODO confirm safe to assume non-null and use getInstance()
+                        ciBase.removeComputer(Computer.this);
                     }
                 }
             }
@@ -1123,12 +1117,9 @@ public /*transient*/ abstract class Computer extends Actionable implements Acces
      * Called from {@link Jenkins#cleanUp}.
      */
     public void interrupt() {
-        Queue.withLock(new Runnable() {
-            @Override
-            public void run() {
-                for (Executor e : executors) {
-                    e.interruptForShutdown();
-                }
+        Queue.withLock(() -> {
+            for (Executor e : executors) {
+                e.interruptForShutdown();
             }
         });
     }
@@ -1630,11 +1621,7 @@ public /*transient*/ abstract class Computer extends Actionable implements Acces
 
     /*package*/ static void relocateOldLogs(File dir) {
         final Pattern logfile = Pattern.compile("slave-(.*)\\.log(\\.[0-9]+)?");
-        File[] logfiles = dir.listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return logfile.matcher(name).matches();
-            }
-        });
+        File[] logfiles = dir.listFiles((dir1, name) -> logfile.matcher(name).matches());
         if (logfiles==null)     return;
 
         for (File f : logfiles) {

@@ -795,16 +795,13 @@ public class QueueTest {
         assertNotNull(item);
 
         final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
-        executor.schedule(new Runnable() {
-            @Override
-            public void run() {
-                   try {
-                       Queue.getInstance().doCancelItem(item.getId());
-                   } catch (IOException | ServletException e) {
-                       e.printStackTrace();
-                   }
-            }
-            }, 2, TimeUnit.SECONDS);
+        executor.schedule(() -> {
+               try {
+                   Queue.getInstance().doCancelItem(item.getId());
+               } catch (IOException | ServletException e) {
+                   e.printStackTrace();
+               }
+        }, 2, TimeUnit.SECONDS);
 
         try {
             f.waitForStart();

@@ -715,11 +715,7 @@ public abstract class ProcessTree implements Iterable<OSProcess>, IProcessTree, 
         ProcfsUnix(boolean vetoersExist) {
             super(vetoersExist);
             
-            File[] processes = new File("/proc").listFiles(new FileFilter() {
-                public boolean accept(File f) {
-                    return f.isDirectory();
-                }
-            });
+            File[] processes = new File("/proc").listFiles(f -> f.isDirectory());
             if(processes==null) {
                 LOGGER.info("No /proc");
                 return;

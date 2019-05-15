@@ -286,13 +286,10 @@ public class NodeTest {
         mavenProject.setAssignedLabel(j.jenkins.getLabel("label1"));
         RunLoadCounter.prepare(mavenProject);
         j.assertBuildStatus(Result.FAILURE, mavenProject.scheduleBuild2(0).get());
-        Integer labelCount = RunLoadCounter.assertMaxLoads(mavenProject, 0, new Callable<Integer>() {
-            @Override
-            public Integer call() throws Exception {
-                final Label label = j.jenkins.getLabel("label1");
-                label.reset(); // Make sure cached value is not used
-                return label.getTiedJobCount();
-            }
+        Integer labelCount = RunLoadCounter.assertMaxLoads(mavenProject, 0, () -> {
+            final Label label = j.jenkins.getLabel("label1");
+            label.reset(); // Make sure cached value is not used
+            return label.getTiedJobCount();
         });
 
         assertEquals("Should have only one job tied to label.",

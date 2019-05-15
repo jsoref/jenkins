@@ -1912,12 +1912,10 @@ public class Jenkins extends AbstractCIBase implements DirectlyModifiableTopLeve
      */
     public Computer[] getComputers() {
         Computer[] r = computers.values().toArray(new Computer[0]);
-        Arrays.sort(r,new Comparator<Computer>() {
-            @Override public int compare(Computer lhs, Computer rhs) {
-                if(lhs.getNode()==Jenkins.this)  return -1;
-                if(rhs.getNode()==Jenkins.this)  return 1;
-                return lhs.getName().compareTo(rhs.getName());
-            }
+        Arrays.sort(r, (lhs, rhs) -> {
+            if(lhs.getNode()==Jenkins.this)  return -1;
+            if(rhs.getNode()==Jenkins.this)  return 1;
+            return lhs.getName().compareTo(rhs.getName());
         });
         return r;
     }
@@ -3136,107 +3134,102 @@ public class Jenkins extends AbstractCIBase implements DirectlyModifiableTopLeve
         final Set<String> loadedNames = Collections.synchronizedSet(new HashSet<>());
 
         TaskGraphBuilder g = new TaskGraphBuilder();
-        Handle loadJenkins = g.requires(EXTENSIONS_AUGMENTED).attains(JOB_LOADED).add("Loading global config", new Executable() {
-            public void run(Reactor session) throws Exception {
-                loadConfig();
-                // if we are loading old data that doesn't have this field
-                if (slaves != null && !slaves.isEmpty() && nodes.isLegacy()) {
-                    nodes.setNodes(slaves);
-                    slaves = null;
-                } else {
-                    nodes.load();
-                }
-
-                clouds.setOwner(Jenkins.this);
+        Handle loadJenkins = g.requires(EXTENSIONS_AUGMENTED).attains(JOB_LOADED).add("Loading global config", session -> {
+            loadConfig();
+            // if we are loading old data that doesn't have this field
+            if (slaves != null && !slaves.isEmpty() && nodes.isLegacy()) {
+                nodes.setNodes(slaves);
+                slaves = null;
+            } else {
+                nodes.load();
             }
+
+            clouds.setOwner(Jenkins.this);
         });
 
         List<Handle> loadJobs = new ArrayList<>();
         for (final File subdir : subdirs) {
-            loadJobs.add(g.requires(loadJenkins).attains(JOB_LOADED).notFatal().add("Loading item " + subdir.getName(), new Executable() {
-                public void run(Reactor session) throws Exception {
-                    if(!Items.getConfigFile(subdir).exists()) {
-                        //Does not have job config file, so it is not a jenkins job hence skip it
-                        return;
-                    }
-                    TopLevelItem item = (TopLevelItem) Items.load(Jenkins.this, subdir);
-                    items.put(item.getName(), item);
-                    loadedNames.add(item.getName());
+            loadJobs.add(g.requires(loadJenkins).attains(JOB_LOADED).notFatal().add("Loading item " + subdir.getName(), session -> {
+                if(!Items.getConfigFile(subdir).exists()) {
+                    //Does not have job config file, so it is not a jenkins job hence skip it
+                    return;
                 }
+                TopLevelItem item = (TopLevelItem) Items.load(Jenkins.this, subdir);
+                items.put(item.getName(), item);
+                loadedNames.add(item.getName());
             }));
         }
 
-        g.requires(loadJobs.toArray(new Handle[0])).attains(JOB_LOADED).add("Cleaning up obsolete items deleted from the disk", new Executable() {
-            public void run(Reactor reactor) throws Exception {
-                // anything we didn't load from disk, throw them away.
-                // doing this after loading from disk allows newly loaded items
-                // to inspect what already existed in memory (in case of reloading)
+        g.requires(loadJobs.toArray(new Handle[0])).attains(JOB_LOADED).add("Cleaning up obsolete items deleted from the disk", reactor -> {
+            // anything we didn't load from disk, throw them away.
+            // doing this after loading from disk allows newly loaded items
+            // to inspect what already existed in memory (in case of reloading)
 
-                // retainAll doesn't work well because of CopyOnWriteMap implementation, so remove one by one
-                // hopefully there shouldn't be too many of them.
-                for (String name : items.keySet()) {
-                    if (!loadedNames.contains(name))
-                        items.remove(name);
-                }
+            // retainAll doesn't work well because of CopyOnWriteMap implementation, so remove one by one
+            // hopefully there shouldn't be too many of them.
+            for (String name : items.keySet()) {
+                if (!loadedNames.contains(name))
+                    items.remove(name);
             }
         });
 
-        g.requires(JOB_LOADED).attains(COMPLETED).add("Finalizing set up",new Executable() {
-            public void run(Reactor session) throws Exception {
-                rebuildDependencyGraph();
+        g.requires(JOB_LOADED).attains(COMPLETED).add("Finalizing set up", session -> {
+            rebuildDependencyGraph();
 
-                {// recompute label objects - populates the labels mapping.
-                    for (Node slave : nodes.getNodes())
-                        // Note that not all labels are visible until the agents have connected.
-                        slave.getAssignedLabels();
-                    getAssignedLabels();
-                }
+            {// recompute label objects - populates the labels mapping.
+                for (Node slave : nodes.getNodes())
+                    // Note that not all labels are visible until the agents have connected.
+                    slave.getAssignedLabels();
+                getAssignedLabels();
+            }
 
+            synchronized (Jenkins.class) {
                 // initialize views by inserting the default view if necessary
                 // this is both for clean Jenkins and for backward compatibility.
-                if(views.size()==0 || primaryView==null) {
+                if (views.size() == 0 || primaryView == null) {
                     View v = new AllView(AllView.DEFAULT_VIEW_NAME);
                     setViewOwner(v);
-                    views.add(0,v);
+                    views.add(0, v);
                     primaryView = v.getViewName();
                 }
                 primaryView = AllView.migrateLegacyPrimaryAllViewLocalizedName(views, primaryView);
+            }
 
-                if (useSecurity!=null && !useSecurity) {
-                    // forced reset to the unsecure mode.
-                    // this works as an escape hatch for people who locked themselves out.
-                    authorizationStrategy = AuthorizationStrategy.UNSECURED;
-                    setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
-                } else {
-                    // read in old data that doesn't have the security field set
-                    if(authorizationStrategy==null) {
-                        if(useSecurity==null)
-                            authorizationStrategy = AuthorizationStrategy.UNSECURED;
-                        else
-                            authorizationStrategy = new LegacyAuthorizationStrategy();
-                    }
-                    if(securityRealm==null) {
-                        if(useSecurity==null)
-                            setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
-                        else
-                            setSecurityRealm(new LegacySecurityRealm());
-                    } else {
-                        // force the set to proxy
-                        setSecurityRealm(securityRealm);
-                    }
+            if (useSecurity!=null && !useSecurity) {
+                // forced reset to the unsecure mode.
+                // this works as an escape hatch for people who locked themselves out.
+                authorizationStrategy = AuthorizationStrategy.UNSECURED;
+                setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
+            } else {
+                // read in old data that doesn't have the security field set
+                if(authorizationStrategy==null) {
+                    if(useSecurity==null)
+                        authorizationStrategy = AuthorizationStrategy.UNSECURED;
+                    else
+                        authorizationStrategy = new LegacyAuthorizationStrategy();
                 }
 
-
-                // Initialize the filter with the crumb issuer
-                setCrumbIssuer(crumbIssuer);
-
-                // auto register root actions
-                for (Action a : getExtensionList(RootAction.class))
-                    if (!actions.contains(a)) actions.add(a);
-
-                setupWizard = new SetupWizard();
-                getInstallState().initializeState();
+                if(securityRealm==null) {
+                    if(useSecurity==null)
+                        setSecurityRealm(SecurityRealm.NO_AUTHENTICATION);
+                    else
+                        setSecurityRealm(new LegacySecurityRealm());
+                } else {
+                    // force the set to proxy
+                    setSecurityRealm(securityRealm);
+                }
             }
+
+
+            // Initialize the filter with the crumb issuer
+            setCrumbIssuer(crumbIssuer);
+
+            // auto register root actions
+            for (Action a : getExtensionList(RootAction.class))
+                if (!actions.contains(a)) actions.add(a);
+
+            setupWizard = new SetupWizard();
+            getInstallState().initializeState();
         });
 
         return g;
@@ -3369,12 +3362,7 @@ public class Jenkins extends AbstractCIBase implements DirectlyModifiableTopLeve
         try {
             final TerminatorFinder tf = new TerminatorFinder(
                     pluginManager != null ? pluginManager.uberClassLoader : Thread.currentThread().getContextClassLoader());
-            new Reactor(tf).execute(new Executor() {
-                @Override
-                public void execute(Runnable command) {
-                    command.run();
-                }
-            }, new ReactorListener() {
+            new Reactor(tf).execute(command -> command.run(), new ReactorListener() {
                 final Level level = Level.parse(Configuration.getStringConfigParameter("termLogLevel", "FINE"));
 
                 public void onTaskStarted(Task t) {
@@ -3416,25 +3404,22 @@ public class Jenkins extends AbstractCIBase implements DirectlyModifiableTopLeve
         LOGGER.log(Main.isUnitTest ? Level.FINE : Level.INFO, "Starting node disconnection");
         final Set<Future<?>> pending = new HashSet<>();
         // JENKINS-28840 we know we will be interrupting all the Computers so get the Queue lock once for all
-        Queue.withLock(new Runnable() {
-            @Override
-            public void run() {
-                for( Computer c : computers.values() ) {
-                    try {
-                        c.interrupt();
-                        killComputer(c);
-                        pending.add(c.disconnect(null));
-                    } catch (OutOfMemoryError e) {
-                        // we should just propagate this, no point trying to log
-                        throw e;
-                    } catch (LinkageError e) {
-                        LOGGER.log(Level.WARNING, "Could not disconnect " + c + ": " + e.getMessage(), e);
-                        // safe to ignore and continue for this one
-                    } catch (Throwable e) {
-                        LOGGER.log(Level.WARNING, "Could not disconnect " + c + ": " + e.getMessage(), e);
-                        // save for later
-                        errors.add(e);
-                    }
+        Queue.withLock(() -> {
+            for( Computer c : computers.values() ) {
+                try {
+                    c.interrupt();
+                    killComputer(c);
+                    pending.add(c.disconnect(null));
+                } catch (OutOfMemoryError e) {
+                    // we should just propagate this, no point trying to log
+                    throw e;
+                } catch (LinkageError e) {
+                    LOGGER.log(Level.WARNING, "Could not disconnect " + c + ": " + e.getMessage(), e);
+                    // safe to ignore and continue for this one
+                } catch (Throwable e) {
+                    LOGGER.log(Level.WARNING, "Could not disconnect " + c + ": " + e.getMessage(), e);
+                    // save for later
+                    errors.add(e);
                 }
             }
         });
@@ -4641,14 +4626,11 @@ public class Jenkins extends AbstractCIBase implements DirectlyModifiableTopLeve
      */
     public Future<DependencyGraph> rebuildDependencyGraphAsync() {
         dependencyGraphDirty.set(true);
-        return Timer.get().schedule(new java.util.concurrent.Callable<DependencyGraph>() {
-            @Override
-            public DependencyGraph call() throws Exception {
-                if (dependencyGraphDirty.get()) {
-                    rebuildDependencyGraph();
-                }
-                return dependencyGraph;
+        return Timer.get().schedule(() -> {
+            if (dependencyGraphDirty.get()) {
+                rebuildDependencyGraph();
             }
+            return dependencyGraph;
         }, 500, TimeUnit.MILLISECONDS);
     }
 

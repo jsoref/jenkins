@@ -31,12 +31,7 @@ abstract class ConfigDirectory<T,COL extends Collection<T>> extends ConfigFile<T
         COL result = create();
 
         if (dir.exists()) {
-            String[] fragments = dir.list(new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    return name.endsWith(".conf");
-                }
-            });
+            String[] fragments = dir.list((dir, name) -> name.endsWith(".conf"));
             if (fragments!=null) {
                 Arrays.sort(fragments);
 

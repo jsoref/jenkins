@@ -152,11 +152,7 @@ public class CLI {
                 context.init(null, new TrustManager[]{new NoCheckTrustManager()}, new SecureRandom());
                 HttpsURLConnection.setDefaultSSLSocketFactory(context.getSocketFactory());
                 // bypass host name check, too.
-                HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                    public boolean verify(String s, SSLSession sslSession) {
-                        return true;
-                    }
-                });
+                HttpsURLConnection.setDefaultHostnameVerifier((s, sslSession) -> true);
                 args = args.subList(1,args.size());
                 continue;
             }

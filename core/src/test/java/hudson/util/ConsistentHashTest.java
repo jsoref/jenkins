@@ -159,10 +159,8 @@ public class ConsistentHashTest {
     @Test
     public void usesCustomHash() {
         final RuntimeException exception = new RuntimeException();
-        ConsistentHash.Hash<String> hashFunction = new ConsistentHash.Hash<String>() {
-            public String hash(String str) {
-                throw exception;
-            }
+        ConsistentHash.Hash<String> hashFunction = str -> {
+            throw exception;
         };
 
         try {

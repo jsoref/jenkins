@@ -1169,11 +1169,9 @@ public abstract class View extends AbstractModelObject implements AccessControll
         if (req.getMethod().equals("GET")) {
             // read
             checkPermission(READ);
-            return new HttpResponse() {
-                public void generateResponse(StaplerRequest req, StaplerResponse rsp, Object node) throws IOException, ServletException {
-                    rsp.setContentType("application/xml");
-                    View.this.writeXml(rsp.getOutputStream());
-                }
+            return (req1, rsp, node) -> {
+                rsp.setContentType("application/xml");
+                View.this.writeXml(rsp.getOutputStream());
             };
         }
         if (req.getMethod().equals("POST")) {
@@ -1286,11 +1284,7 @@ public abstract class View extends AbstractModelObject implements AccessControll
         return r;
     }
 
-    public static final Comparator<View> SORTER = new Comparator<View>() {
-        public int compare(View lhs, View rhs) {
-            return lhs.getViewName().compareTo(rhs.getViewName());
-        }
-    };
+    public static final Comparator<View> SORTER = (lhs, rhs) -> lhs.getViewName().compareTo(rhs.getViewName());
 
     public static final PermissionGroup PERMISSIONS = new PermissionGroup(View.class,Messages._View_Permissions_Title());
     /**

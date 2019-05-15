@@ -1097,16 +1097,12 @@ public abstract class AbstractBuild<P extends AbstractProject<P,R>,R extends Abs
     public Iterable<AbstractBuild<?,?>> getDownstreamBuilds(final AbstractProject<?,?> that) {
         final Iterable<Integer> nums = getDownstreamRelationship(that).listNumbers();
 
-        return new Iterable<AbstractBuild<?, ?>>() {
-            public Iterator<AbstractBuild<?, ?>> iterator() {
-                return Iterators.removeNull(
-                    new AdaptedIterator<Integer,AbstractBuild<?,?>>(nums) {
-                        protected AbstractBuild<?, ?> adapt(Integer item) {
-                            return that.getBuildByNumber(item);
-                        }
-                    });
-            }
-        };
+        return () -> Iterators.removeNull(
+            new AdaptedIterator<Integer,AbstractBuild<?,?>>(nums) {
+                protected AbstractBuild<?, ?> adapt(Integer item) {
+                    return that.getBuildByNumber(item);
+                }
+            });
     }
 
     /**

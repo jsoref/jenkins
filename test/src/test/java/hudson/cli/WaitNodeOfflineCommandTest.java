@@ -134,14 +134,12 @@ public class WaitNodeOfflineCommandTest {
         slave.toComputer().waitUntilOnline();
         boolean timeoutOccurred = false;
 
-        FutureTask task = new FutureTask(new Callable() {
-            public Object call() {
-                final CLICommandInvoker.Result result = command
-                        .authorizedTo(Jenkins.READ)
-                        .invokeWithArgs("aNode");
-                fail("Never should return from previous CLI call!");
-                return null;
-            }
+        FutureTask task = new FutureTask(() -> {
+            final CLICommandInvoker.Result result = command
+                    .authorizedTo(Jenkins.READ)
+                    .invokeWithArgs("aNode");
+            fail("Never should return from previous CLI call!");
+            return null;
         });
         try {
             task.get(30, TimeUnit.SECONDS);

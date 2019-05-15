@@ -101,11 +101,7 @@ public abstract class ItemGroupMixIn {
     public static <K,V extends Item> Map<K,V> loadChildren(ItemGroup parent, File modulesDir, Function1<? extends K,? super V> key) {
         modulesDir.mkdirs(); // make sure it exists
 
-        File[] subdirs = modulesDir.listFiles(new FileFilter() {
-            public boolean accept(File child) {
-                return child.isDirectory();
-            }
-        });
+        File[] subdirs = modulesDir.listFiles(child -> child.isDirectory());
         CopyOnWriteMap.Tree<K,V> configurations = new CopyOnWriteMap.Tree<>();
         for (File subdir : subdirs) {
             try {
@@ -134,11 +130,7 @@ public abstract class ItemGroupMixIn {
     /**
      * {@link Item} → name function.
      */
-    public static final Function1<String,Item> KEYED_BY_NAME = new Function1<String, Item>() {
-        public String call(Item item) {
-            return item.getName();
-        }
-    };
+    public static final Function1<String,Item> KEYED_BY_NAME = item -> item.getName();
 
     /**
      * Creates a {@link TopLevelItem} for example from the submission of the {@code /lib/hudson/newFromList/form} tag

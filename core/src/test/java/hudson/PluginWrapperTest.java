@@ -107,11 +107,7 @@ public class PluginWrapperTest {
     private final HashMap<String, PluginWrapper> plugins = new HashMap<>();
     private final PluginManager pm = mock(PluginManager.class);
     {
-        when(pm.getPlugin(any(String.class))).thenAnswer(new Answer<PluginWrapper>() {
-            @Override public PluginWrapper answer(InvocationOnMock invocation) throws Throwable {
-                return plugins.get(invocation.getArguments()[0]);
-            }
-        });
+        when(pm.getPlugin(any(String.class))).thenAnswer((Answer<PluginWrapper>) invocation -> plugins.get(invocation.getArguments()[0]));
     }
     private final class PluginWrapperBuilder {
         private String name;

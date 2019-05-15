@@ -234,19 +234,16 @@ public class HistoryPageFilter<T> {
         // Queue items can start building out of order with how they got added to the queue. Sorting them
         // before adding to the page. They'll still get displayed before the building items coz they end
         // up in a different list in HistoryPageFilter.
-        items.sort(new Comparator<Object>() {
-            @Override
-            public int compare(Object o1, Object o2) {
-                long o1QID = HistoryPageEntry.getEntryId(o1);
-                long o2QID = HistoryPageEntry.getEntryId(o2);
+        items.sort((Comparator<Object>) (o1, o2) -> {
+            long o1QID = HistoryPageEntry.getEntryId(o1);
+            long o2QID = HistoryPageEntry.getEntryId(o2);
 
-                if (o1QID < o2QID) {
-                    return 1;
-                } else if (o1QID == o2QID) {
-                    return 0;
-                } else {
-                    return -1;
-                }
+            if (o1QID < o2QID) {
+                return 1;
+            } else if (o1QID == o2QID) {
+                return 0;
+            } else {
+                return -1;
             }
         });
     }

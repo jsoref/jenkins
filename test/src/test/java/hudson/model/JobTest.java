@@ -304,11 +304,7 @@ public class JobTest {
         j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         j.assertBuildStatusSuccess(p.scheduleBuild2(0));
         assertEquals(6, p.getLastSuccessfulBuild().getNumber());
-        assertEquals(3, RunLoadCounter.assertMaxLoads(p, 1, new Callable<Integer>() {
-            @Override public Integer call() throws Exception {
-                return p.getLastFailedBuild().getNumber();
-            }
-        }).intValue());
+        assertEquals(3, RunLoadCounter.assertMaxLoads(p, 1, () -> p.getLastFailedBuild().getNumber()).intValue());
     }
 
     @Issue("JENKINS-19764")

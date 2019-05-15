@@ -1755,19 +1755,13 @@ public class Queue extends ResourceController implements Saveable {
             LOGGER.log(Level.FINEST, "Creating flyweight task {0} for computer {1}",
                     new Object[]{p.task.getFullDisplayName(), c.getName()});
         }
-        return new Runnable() {
-            @Override public void run() {
-                c.startFlyWeightTask(new WorkUnitContext(p).createWorkUnit(p.task));
-                makePending(p);
-            }
+        return () -> {
+            c.startFlyWeightTask(new WorkUnitContext(p).createWorkUnit(p.task));
+            makePending(p);
         };
     }
 
-    private static Hash<Node> NODE_HASH = new Hash<Node>() {
-        public String hash(Node node) {
-            return node.getNodeName();
-        }
-    };
+    private static Hash<Node> NODE_HASH = node -> node.getNodeName();
 
     private boolean makePending(BuildableItem p) {
         // LOGGER.info("Making "+p.task+" pending"); // REMOVE

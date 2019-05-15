@@ -94,12 +94,7 @@ public class BootFailureTest {
     @Test
     public void runBootFailureScript() throws Exception {
         final File home = tmpDir.newFolder();
-        j.with(new HudsonHomeLoader() {
-            @Override
-            public File allocate() throws Exception {
-                return home;
-            }
-        });
+        j.with(() -> home);
 
         // creates a script
         FileUtils.write(new File(home, "boot-failure.groovy"), "hudson.util.BootFailureTest.problem = exception");
@@ -137,12 +132,7 @@ public class BootFailureTest {
     @Test
     public void interruptedStartup() throws Exception {
         final File home = tmpDir.newFolder();
-        j.with(new HudsonHomeLoader() {
-            @Override
-            public File allocate() throws Exception {
-                return home;
-            }
-        });
+        j.with(() -> home);
         File d = new File(home, "boot-failure.groovy.d");
         d.mkdirs();
         FileUtils.write(new File(d, "1.groovy"), "hudson.util.BootFailureTest.runRecord << '1'");

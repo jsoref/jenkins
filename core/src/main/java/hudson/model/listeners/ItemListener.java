@@ -183,11 +183,9 @@ public class ItemListener implements ExtensionPoint {
     }
 
     public static void fireOnCopied(final Item src, final Item result) {
-        forAll(new Function<ItemListener,Void>() {
-            @Override public Void apply(ItemListener l) {
-                l.onCopied(src, result);
-                return null;
-            }
+        forAll(l -> {
+            l.onCopied(src, result);
+            return null;
         });
     }
 
@@ -213,30 +211,24 @@ public class ItemListener implements ExtensionPoint {
     }
 
     public static void fireOnCreated(final Item item) {
-        forAll(new Function<ItemListener,Void>() {
-            @Override public Void apply(ItemListener l) {
-                l.onCreated(item);
-                return null;
-            }
+        forAll(l -> {
+            l.onCreated(item);
+            return null;
         });
     }
 
     public static void fireOnUpdated(final Item item) {
-        forAll(new Function<ItemListener,Void>() {
-            @Override public Void apply(ItemListener l) {
-                l.onUpdated(item);
-                return null;
-            }
+        forAll(l -> {
+            l.onUpdated(item);
+            return null;
         });
     }
 
     /** @since 1.548 */
     public static void fireOnDeleted(final Item item) {
-        forAll(new Function<ItemListener,Void>() {
-            @Override public Void apply(ItemListener l) {
-                l.onDeleted(item);
-                return null;
-            }
+        forAll(l -> {
+            l.onDeleted(item);
+            return null;
         });
     }
 
@@ -258,18 +250,14 @@ public class ItemListener implements ExtensionPoint {
             final String oldName = oldFullName.substring(prefixS);
             final String newName = rootItem.getName();
             assert newName.equals(newFullName.substring(prefixS));
-            forAll(new Function<ItemListener, Void>() {
-                @Override public Void apply(ItemListener l) {
-                    l.onRenamed(rootItem, oldName, newName);
-                    return null;
-                }
+            forAll(l -> {
+                l.onRenamed(rootItem, oldName, newName);
+                return null;
             });
         }
-        forAll(new Function<ItemListener, Void>() {
-            @Override public Void apply(ItemListener l) {
-                l.onLocationChanged(rootItem, oldFullName, newFullName);
-                return null;
-            }
+        forAll(l -> {
+            l.onLocationChanged(rootItem, oldFullName, newFullName);
+            return null;
         });
         if (rootItem instanceof ItemGroup) {
             for (final Item child : Items.allItems(ACL.SYSTEM, (ItemGroup)rootItem, Item.class)) {
@@ -277,11 +265,9 @@ public class ItemListener implements ExtensionPoint {
                 assert childNew.startsWith(newFullName);
                 assert childNew.charAt(newFullName.length()) == '/';
                 final String childOld = oldFullName + childNew.substring(newFullName.length());
-                forAll(new Function<ItemListener, Void>() {
-                    @Override public Void apply(ItemListener l) {
-                        l.onLocationChanged(child, childOld, childNew);
-                        return null;
-                    }
+                forAll(l -> {
+                    l.onLocationChanged(child, childOld, childNew);
+                    return null;
                 });
             }
         }

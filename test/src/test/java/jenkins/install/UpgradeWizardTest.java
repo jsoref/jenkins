@@ -69,17 +69,14 @@ public class UpgradeWizardTest {
     
     @Test
     public void snooze() throws Exception {
-        j.executeOnServer(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                writeVersion("1.5");
-                UpgradeWizard uw = getInstance();
-                assertTrue(uw.isDue());
-                uw.doSnooze();
-                assertFalse(uw.isDue());
+        j.executeOnServer((Callable<Void>) () -> {
+            writeVersion("1.5");
+            UpgradeWizard uw = getInstance();
+            assertTrue(uw.isDue());
+            uw.doSnooze();
+            assertFalse(uw.isDue());
 
-                return null;
-            }
+            return null;
         });
     }
 
@@ -88,18 +85,15 @@ public class UpgradeWizardTest {
      */
     @Test
     public void upgrade() throws Exception {
-        j.executeOnServer(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                assertTrue(j.jenkins.getUpdateCenter().getJobs().size() == 0);
-                writeVersion("1.5");
-                assertTrue(getInstance().isDue());
+        j.executeOnServer((Callable<Void>) () -> {
+            assertTrue(j.jenkins.getUpdateCenter().getJobs().size() == 0);
+            writeVersion("1.5");
+            assertTrue(getInstance().isDue());
 
-                // can't really test this because UC metadata is empty
-                // assertTrue(j.jenkins.getUpdateCenter().getJobs().size() > 0);
+            // can't really test this because UC metadata is empty
+            // assertTrue(j.jenkins.getUpdateCenter().getJobs().size() > 0);
 
-                return null;
-            }
+            return null;
         });
     }
 
@@ -108,31 +102,25 @@ public class UpgradeWizardTest {
      */
     @Test
     public void fullyUpgraded() throws Exception {
-        j.executeOnServer(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                platformPluginUpdates = new JSONArray();
-                assertFalse(getInstance().isDue());
-                return null;
-            }
+        j.executeOnServer((Callable<Void>) () -> {
+            platformPluginUpdates = new JSONArray();
+            assertFalse(getInstance().isDue());
+            return null;
         });
     }
 
     @Test
     public void freshInstallation() throws Exception {
-        j.executeOnServer(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                InstallState prior = j.jenkins.getInstallState();
-                try {
-                    UpgradeWizard uw = getInstance();
-                    assertTrue(uw.isDue()); // there are platform plugin updates
-                    j.jenkins.getSetupWizard().completeSetup();
-                    assertFalse(uw.isDue());
-                    return null;
-                } finally {
-                    j.jenkins.setInstallState(prior);
-                }
+        j.executeOnServer((Callable<Void>) () -> {
+            InstallState prior = j.jenkins.getInstallState();
+            try {
+                UpgradeWizard uw = getInstance();
+                assertTrue(uw.isDue()); // there are platform plugin updates
+                j.jenkins.getSetupWizard().completeSetup();
+                assertFalse(uw.isDue());
+                return null;
+            } finally {
+                j.jenkins.setInstallState(prior);
             }
         });
     }

@@ -136,12 +136,7 @@ public class DependencyGraph implements Comparator<AbstractProject> {
             }
         }
 
-        topologicalOrder = new Comparator<AbstractProject<?, ?>>() {
-            @Override
-            public int compare(AbstractProject<?,?> o1, AbstractProject<?,?> o2) {
-                return topoOrder.get(o1)-topoOrder.get(o2);
-            }
-        };
+        topologicalOrder = (o1, o2) -> topoOrder.get(o1)-topoOrder.get(o2);
 
         topologicallySorted = Collections.unmodifiableList(topologicallySorted);
     }
@@ -353,11 +348,9 @@ public class DependencyGraph implements Comparator<AbstractProject> {
         return Collections.unmodifiableMap(m);
     }
 
-    private static final Comparator<DependencyGroup> NAME_COMPARATOR = new Comparator<DependencyGroup>() {
-        public int compare(DependencyGroup lhs, DependencyGroup rhs) {
-            int cmp = lhs.getUpstreamProject().getName().compareTo(rhs.getUpstreamProject().getName());
-            return cmp != 0 ? cmp : lhs.getDownstreamProject().getName().compareTo(rhs.getDownstreamProject().getName());
-        }
+    private static final Comparator<DependencyGroup> NAME_COMPARATOR = (lhs, rhs) -> {
+        int cmp = lhs.getUpstreamProject().getName().compareTo(rhs.getUpstreamProject().getName());
+        return cmp != 0 ? cmp : lhs.getDownstreamProject().getName().compareTo(rhs.getDownstreamProject().getName());
     };
 
     public static final DependencyGraph EMPTY = new DependencyGraph(false);

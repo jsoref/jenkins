@@ -188,11 +188,7 @@ public class GlobalSecurityConfiguration extends ManagementLink implements Descr
         return Jenkins.ADMINISTER;
     }
 
-    public static Predicate<GlobalConfigurationCategory> FILTER = new Predicate<GlobalConfigurationCategory>() {
-        public boolean apply(GlobalConfigurationCategory input) {
-            return input instanceof GlobalConfigurationCategory.Security;
-        }
-    };
+    public static Predicate<GlobalConfigurationCategory> FILTER = input -> input instanceof GlobalConfigurationCategory.Security;
 
     /**
      * @return

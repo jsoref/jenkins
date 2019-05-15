@@ -194,11 +194,7 @@ public class ConsistentHash<T> {
         String hash(T t);
     }
 
-    static final Hash<?> DEFAULT_HASH = new Hash<Object>() {
-        public String hash(Object o) {
-            return o.toString();
-        }
-    };
+    static final Hash<?> DEFAULT_HASH = (Hash<Object>) o -> o.toString();
 
     public ConsistentHash() {
         this((Hash<T>) DEFAULT_HASH);
@@ -346,11 +342,7 @@ public class ConsistentHash<T> {
      * Nodes with more replicas are more likely to show up early in the list
      */
     public Iterable<T> list(final int queryPoint) {
-        return new Iterable<T>() {
-            public Iterator<T> iterator() {
-                return table.list(queryPoint);
-            }
-        };
+        return () -> table.list(queryPoint);
     }
 
     /**

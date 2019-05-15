@@ -43,12 +43,7 @@ public class JenkinsLocationConfigurationTest {
     @Before
     public void setUp() {
         config = mock(JenkinsLocationConfiguration.class, Mockito.CALLS_REAL_METHODS);
-        Answer<String> mockVoid = new Answer<String>() {
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return "stub";
-            }
-        };
+        Answer<String> mockVoid = invocation -> "stub";
         Mockito.doAnswer(mockVoid).when(config).save();      
         Mockito.doAnswer(mockVoid).when(config).save();
     }

@@ -171,12 +171,10 @@ public class JenkinsGetRootUrlTest {
         when(req.getServerName()).thenReturn(url.getHost());
         when(req.getServerPort()).thenReturn(url.getPort() == -1 ? ("https".equals(url.getProtocol()) ? 443 : 80) : url.getPort());
         when(req.getContextPath()).thenReturn(url.getPath().replaceAll("/$", ""));
-        when(req.getIntHeader(anyString())).thenAnswer(new Answer<Integer>() {
-            @Override public Integer answer(InvocationOnMock invocation) throws Throwable {
-                String name = (String) invocation.getArguments()[0];
-                String value = ((StaplerRequest) invocation.getMock()).getHeader(name);
-                return value != null ? Integer.parseInt(value) : -1;
-            }
+        when(req.getIntHeader(anyString())).thenAnswer((Answer<Integer>) invocation -> {
+            String name = (String) invocation.getArguments()[0];
+            String value = ((StaplerRequest) invocation.getMock()).getHeader(name);
+            return value != null ? Integer.parseInt(value) : -1;
         });
 
         when(Stapler.getCurrentRequest()).thenReturn(req);

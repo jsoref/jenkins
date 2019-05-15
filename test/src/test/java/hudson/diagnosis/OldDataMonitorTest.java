@@ -108,26 +108,20 @@ public class OldDataMonitorTest {
         final OldDataMonitor oldDataMonitor = OldDataMonitor.get(r.jenkins);
         final CountDownLatch ensureEntry= new CountDownLatch(1);
         final CountDownLatch preventExit = new CountDownLatch(1);
-        Saveable slowSavable = new Saveable() {
-            @Override
-            public void save() throws IOException {
-                try {
-                    ensureEntry.countDown();
-                    preventExit.await();
-                } catch (InterruptedException e) {
-                }
+        Saveable slowSavable = () -> {
+            try {
+                ensureEntry.countDown();
+                preventExit.await();
+            } catch (InterruptedException e) {
             }
         };
 
         OldDataMonitor.report(slowSavable,(String)null);
         ExecutorService executors = Executors.newSingleThreadExecutor();
 
-        Future<Void> discardFuture = executors.submit(new Callable<Void>() {
-            @Override
-            public Void call() throws Exception {
-                oldDataMonitor.doDiscard(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
-                return null;
-            }
+        Future<Void> discardFuture = executors.submit(() -> {
+            oldDataMonitor.doDiscard(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
+            return null;
         });
 
         ensureEntry.await();
@@ -135,7 +129,7 @@ public class OldDataMonitorTest {
         File xml = File.createTempFile("OldDataMonitorTest.slowDiscard", "xml");
         xml.deleteOnExit();
         OldDataMonitor.changeListener
-                .onChange(new Saveable() {public void save() throws IOException {}},
+                .onChange(() -> {},
                         new XmlFile(xml));
 
         preventExit.countDown();

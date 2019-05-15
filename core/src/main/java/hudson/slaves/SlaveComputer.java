@@ -278,46 +278,44 @@ public class SlaveComputer extends Computer {
             logger.fine("Forcing a reconnect on "+getName());
 
         closeChannel();
-        return lastConnectActivity = Computer.threadPoolForRemoting.submit(new java.util.concurrent.Callable<Object>() {
-            public Object call() throws Exception {
-                // do this on another thread so that the lengthy launch operation
-                // (which is typical) won't block UI thread.
+        return lastConnectActivity = Computer.threadPoolForRemoting.submit(() -> {
+            // do this on another thread so that the lengthy launch operation
+            // (which is typical) won't block UI thread.
 
-                ACL.impersonate(ACL.SYSTEM);    // background activity should run like a super user
+            ACL.impersonate(ACL.SYSTEM);    // background activity should run like a super user
 
+            try {
+                log.rewind();
                 try {
-                    log.rewind();
-                    try {
-                        for (ComputerListener cl : ComputerListener.all())
-                            cl.preLaunch(SlaveComputer.this, taskListener);
-                        offlineCause = null;
-                        launcher.launch(SlaveComputer.this, taskListener);
-                    } catch (AbortException e) {
-                        taskListener.error(e.getMessage());
-                        throw e;
-                    } catch (IOException e) {
-                        Util.displayIOException(e,taskListener);
-                        Functions.printStackTrace(e, taskListener.error(Messages.ComputerLauncher_unexpectedError()));
-                        throw e;
-                    } catch (InterruptedException e) {
-                        Functions.printStackTrace(e, taskListener.error(Messages.ComputerLauncher_abortedLaunch()));
-                        throw e;
-                    } catch (Exception e) {
-                        Functions.printStackTrace(e, taskListener.error(Messages.ComputerLauncher_unexpectedError()));
-                        throw e;
-                    }
-                } finally {
-                    if (channel==null && offlineCause == null) {
-                        offlineCause = new OfflineCause.LaunchFailed();
-                        for (ComputerListener cl : ComputerListener.all())
-                            cl.onLaunchFailure(SlaveComputer.this, taskListener);
-                    }
+                    for (ComputerListener cl : ComputerListener.all())
+                        cl.preLaunch(SlaveComputer.this, taskListener);
+                    offlineCause = null;
+                    launcher.launch(SlaveComputer.this, taskListener);
+                } catch (AbortException e) {
+                    taskListener.error(e.getMessage());
+                    throw e;
+                } catch (IOException e) {
+                    Util.displayIOException(e,taskListener);
+                    Functions.printStackTrace(e, taskListener.error(Messages.ComputerLauncher_unexpectedError()));
+                    throw e;
+                } catch (InterruptedException e) {
+                    Functions.printStackTrace(e, taskListener.error(Messages.ComputerLauncher_abortedLaunch()));
+                    throw e;
+                } catch (Exception e) {
+                    Functions.printStackTrace(e, taskListener.error(Messages.ComputerLauncher_unexpectedError()));
+                    throw e;
                 }
-
-                if (channel==null)
-                    throw new IOException("Agent failed to connect, even though the launcher didn't report it. See the log output for details.");
-                return null;
+            } finally {
+                if (channel==null && offlineCause == null) {
+                    offlineCause = new OfflineCause.LaunchFailed();
+                    for (ComputerListener cl : ComputerListener.all())
+                        cl.onLaunchFailure(SlaveComputer.this, taskListener);
+                }
             }
+
+            if (channel==null)
+                throw new IOException("Agent failed to connect, even though the launcher didn't report it. See the log output for details.");
+            return null;
         });
     }
 
@@ -745,14 +743,12 @@ public class SlaveComputer extends Computer {
     @Override
     public Future<?> disconnect(OfflineCause cause) {
         super.disconnect(cause);
-        return Computer.threadPoolForRemoting.submit(new Runnable() {
-            public void run() {
-                // do this on another thread so that any lengthy disconnect operation
-                // (which could be typical) won't block UI thread.
-                launcher.beforeDisconnect(SlaveComputer.this, taskListener);
-                closeChannel();
-                launcher.afterDisconnect(SlaveComputer.this, taskListener);
-            }
+        return Computer.threadPoolForRemoting.submit(() -> {
+            // do this on another thread so that any lengthy disconnect operation
+            // (which could be typical) won't block UI thread.
+            launcher.beforeDisconnect(SlaveComputer.this, taskListener);
+            closeChannel();
+            launcher.afterDisconnect(SlaveComputer.this, taskListener);
         });
     }
 
@@ -860,11 +856,8 @@ public class SlaveComputer extends Computer {
         // constructed.
         if(constructed!=null) {
             if (node instanceof Slave) {
-                Queue.withLock(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((Slave)node).getRetentionStrategy().check(SlaveComputer.this);
-                    }
+                Queue.withLock(() -> {
+                    ((Slave)node).getRetentionStrategy().check(SlaveComputer.this);
                 });
             } else {
                 connect(false);

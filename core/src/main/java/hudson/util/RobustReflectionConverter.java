@@ -187,22 +187,20 @@ public class RobustReflectionConverter implements Converter {
         final Set seenAsAttributes = new HashSet();
 
         // Attributes might be preferred to child elements ...
-         reflectionProvider.visitSerializableFields(source, new ReflectionProvider.Visitor() {
-            public void visit(String fieldName, Class type, Class definedIn, Object value) {
-                SingleValueConverter converter = mapper.getConverterFromItemType(fieldName, type, definedIn);
-                if (converter == null) converter = mapper.getConverterFromItemType(fieldName, type);
-                if (converter == null) converter = mapper.getConverterFromItemType(type);
-                if (converter != null) {
-                    if (value != null) {
-                        final String str = converter.toString(value);
-                        if (str != null) {
-                            writer.addAttribute(mapper.aliasForAttribute(fieldName), str);
-                        }
-                    }
-                    seenAsAttributes.add(fieldName);
-                }
-            }
-        });
+         reflectionProvider.visitSerializableFields(source, (fieldName, type, definedIn, value) -> {
+             SingleValueConverter converter = mapper.getConverterFromItemType(fieldName, type, definedIn);
+             if (converter == null) converter = mapper.getConverterFromItemType(fieldName, type);
+             if (converter == null) converter = mapper.getConverterFromItemType(type);
+             if (converter != null) {
+                 if (value != null) {
+                     final String str = converter.toString(value);
+                     if (str != null) {
+                         writer.addAttribute(mapper.aliasForAttribute(fieldName), str);
+                     }
+                 }
+                 seenAsAttributes.add(fieldName);
+             }
+         });
 
         // Child elements not covered already processed as attributes ...
         reflectionProvider.visitSerializableFields(source, new ReflectionProvider.Visitor() {

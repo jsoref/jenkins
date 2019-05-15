@@ -250,21 +250,19 @@ public class LabelExpressionTest {
 
     @Test
     public void formValidation() throws Exception {
-        j.executeOnServer(new Callable<Object>() {
-            public Object call() throws Exception {
-                DescriptorImpl d = j.jenkins.getDescriptorByType(DescriptorImpl.class);
+        j.executeOnServer(() -> {
+            DescriptorImpl d = j.jenkins.getDescriptorByType(DescriptorImpl.class);
 
-                Label l = j.jenkins.getLabel("foo");
-                DumbSlave s = j.createSlave(l);
-                String msg = d.doCheckLabel(null, "goo").renderHtml();
-                assertTrue(msg.contains("foo"));
-                assertTrue(msg.contains("goo"));
+            Label l = j.jenkins.getLabel("foo");
+            DumbSlave s = j.createSlave(l);
+            String msg = d.doCheckLabel(null, "goo").renderHtml();
+            assertTrue(msg.contains("foo"));
+            assertTrue(msg.contains("goo"));
 
-                msg = d.doCheckLabel(null, "master && goo").renderHtml();
-                assertTrue(msg.contains("foo"));
-                assertTrue(msg.contains("goo"));
-                return null;
-            }
+            msg = d.doCheckLabel(null, "master && goo").renderHtml();
+            assertTrue(msg.contains("foo"));
+            assertTrue(msg.contains("goo"));
+            return null;
         });
     }
 

@@ -87,19 +87,9 @@ public class RepeatablePropertyTest extends HudsonTestCase implements Describabl
         // * no ExcitingObject
         final HtmlForm form = getForm("nested");
         List<HtmlTextInput> containerNameInputs = form.getElementsByAttribute("input", "type", "text");
-        CollectionUtils.filter(containerNameInputs, new Predicate<HtmlTextInput>() {
-            @Override
-            public boolean evaluate(HtmlTextInput input) {
-                return input.getNameAttribute().endsWith(".containerName");
-            }
-        });
+        CollectionUtils.filter(containerNameInputs, input -> input.getNameAttribute().endsWith(".containerName"));
         List<HtmlTextInput> greatPropertyInputs = form.getElementsByAttribute("input", "type", "text");
-        CollectionUtils.filter(greatPropertyInputs, new Predicate<HtmlTextInput>() {
-            @Override
-            public boolean evaluate(HtmlTextInput input) {
-                return input.getNameAttribute().endsWith(".greatProperty");
-            }
-        });
+        CollectionUtils.filter(greatPropertyInputs, input -> input.getNameAttribute().endsWith(".greatProperty"));
         assertEquals(1, containerNameInputs.size());
         assertEquals(0, greatPropertyInputs.size());
     }

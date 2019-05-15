@@ -399,18 +399,8 @@ public class AbstractLazyLoadRunMapTest {
             slowBuilderLoadCount.put(i, new AtomicInteger());
         }
         final FakeMap m = slowBuilder.make();
-        Future<Build> firstLoad = Timer.get().submit(new Callable<Build>() {
-            @Override
-            public Build call() throws Exception {
-                return m.getByNumber(2);
-            }
-        });
-        Future<Build> secondLoad = Timer.get().submit(new Callable<Build>() {
-            @Override
-            public Build call() throws Exception {
-                return m.getByNumber(2);
-            }
-        });
+        Future<Build> firstLoad = Timer.get().submit(() -> m.getByNumber(2));
+        Future<Build> secondLoad = Timer.get().submit(() -> m.getByNumber(2));
         slowBuilderStartSemaphores.get(2).acquire(1);
         // now one of them is inside retrieve(…); the other is waiting for the lock
         slowBuilderEndSemaphores.get(2).release(2); // allow both to proceed

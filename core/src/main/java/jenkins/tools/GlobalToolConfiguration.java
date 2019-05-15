@@ -101,11 +101,7 @@ public class GlobalToolConfiguration extends ManagementLink {
         return d.configure(req, js);
     }
 
-    public static Predicate<GlobalConfigurationCategory> FILTER = new Predicate<GlobalConfigurationCategory>() {
-        public boolean apply(GlobalConfigurationCategory input) {
-            return input instanceof ToolConfigurationCategory;
-        }
-    };
+    public static Predicate<GlobalConfigurationCategory> FILTER = input -> input instanceof ToolConfigurationCategory;
 
     private static final Logger LOGGER = Logger.getLogger(GlobalToolConfiguration.class.getName());
 }

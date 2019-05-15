@@ -1033,11 +1033,7 @@ public class Functions {
      * @since 1.506
      */
     public static Collection<Descriptor> getSortedDescriptorsForGlobalConfigUnclassified() {
-        return getSortedDescriptorsForGlobalConfig(new Predicate<GlobalConfigurationCategory>() {
-            public boolean apply(GlobalConfigurationCategory cat) {
-                return cat instanceof GlobalConfigurationCategory.Unclassified;
-            }
-        });
+        return getSortedDescriptorsForGlobalConfig(cat -> cat instanceof GlobalConfigurationCategory.Unclassified);
     }
     
     private static class Tag implements Comparable<Tag> {
@@ -1949,11 +1945,7 @@ public class Functions {
 
     public static ArrayList<CLICommand> getCLICommands() {
         ArrayList<CLICommand> all = new ArrayList<>(CLICommand.all());
-        Collections.sort(all, new Comparator<CLICommand>() {
-            public int compare(CLICommand cliCommand, CLICommand cliCommand1) {
-                return cliCommand.getName().compareTo(cliCommand1.getName());
-            }
-        });
+        Collections.sort(all, (cliCommand, cliCommand1) -> cliCommand.getName().compareTo(cliCommand1.getName()));
         return all;
     }
 

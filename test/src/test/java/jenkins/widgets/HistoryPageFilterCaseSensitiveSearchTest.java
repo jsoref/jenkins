@@ -39,23 +39,15 @@ public class HistoryPageFilterCaseSensitiveSearchTest {
 
     @Test
     public void should_search_case_sensitively_when_enabled_for_user() throws IOException {
-        setCaseSensitiveSearchForUserAndCheckAssertionForGivenSearchString("FAILURE", new SearchResultAssertFunction() {
-            @Override
-            public void doAssertion(HistoryPageFilter<ModelObject> historyPageFilter) {
-                Assert.assertEquals(1, historyPageFilter.runs.size());
-                Assert.assertEquals(HistoryPageEntry.getEntryId(2), historyPageFilter.runs.get(0).getEntryId());
-            }
+        setCaseSensitiveSearchForUserAndCheckAssertionForGivenSearchString("FAILURE", historyPageFilter -> {
+            Assert.assertEquals(1, historyPageFilter.runs.size());
+            Assert.assertEquals(HistoryPageEntry.getEntryId(2), historyPageFilter.runs.get(0).getEntryId());
         });
     }
 
     @Test
     public void should_skip_result_with_different_capitalization_when_case_sensitively_search_is_enabled_for_user() throws IOException {
-        setCaseSensitiveSearchForUserAndCheckAssertionForGivenSearchString("failure", new SearchResultAssertFunction() {
-            @Override
-            public void doAssertion(HistoryPageFilter<ModelObject> historyPageFilter) {
-                Assert.assertEquals(0, historyPageFilter.runs.size());
-            }
-        });
+        setCaseSensitiveSearchForUserAndCheckAssertionForGivenSearchString("failure", historyPageFilter -> Assert.assertEquals(0, historyPageFilter.runs.size()));
     }
 
     private void setCaseSensitiveSearchForUserAndCheckAssertionForGivenSearchString(final String searchString,

@@ -98,11 +98,7 @@ public class GroovyHookScript {
 
         File scriptD = new File(home, hookGroovyD);
         if (scriptD.isDirectory()) {
-            File[] scripts = scriptD.listFiles(new FileFilter() {
-                public boolean accept(File f) {
-                    return f.getName().endsWith(".groovy");
-                }
-            });
+            File[] scripts = scriptD.listFiles(f -> f.getName().endsWith(".groovy"));
             if (scripts!=null) {
                 // sort to run them in a deterministic order
                 Arrays.sort(scripts);

@@ -69,11 +69,9 @@ public class RobustReflectionConverterTest {
 
     @Test
     public void classOwnership() throws Exception {
-        XStream xs = new XStream2(new XStream2.ClassOwnership() {
-            @Override public String ownerOf(Class<?> clazz) {
-                Owner o = clazz.getAnnotation(Owner.class);
-                return o != null ? o.value() : null;
-            }
+        XStream xs = new XStream2(clazz -> {
+            Owner o = clazz.getAnnotation(Owner.class);
+            return o != null ? o.value() : null;
         });
         String prefix1 = RobustReflectionConverterTest.class.getName() + "_-";
         String prefix2 = RobustReflectionConverterTest.class.getName() + "$";

@@ -532,14 +532,8 @@ public abstract class SecurityRealm extends AbstractDescribableImpl<SecurityReal
 
     private static class None extends SecurityRealm {
         public SecurityComponents createSecurityComponents() {
-            return new SecurityComponents(new AuthenticationManager() {
-                public Authentication authenticate(Authentication authentication) {
-                    return authentication;
-                }
-            }, new UserDetailsService() {
-                public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException {
-                    throw new UsernameNotFoundException(username);
-                }
+            return new SecurityComponents(authentication -> authentication, username -> {
+                throw new UsernameNotFoundException(username);
             });
         }
 
