@@ -368,7 +368,7 @@ public class QueueTest {
         CauseAction ca = build.getAction(CauseAction.class);
         assertNotNull(ca);
         StringBuilder causes = new StringBuilder();
-        for (Cause c : ca.getCauses()) causes.append(c.getShortDescription() + "\n");
+        for (Cause c : ca.getCauses()) causes.append(c.getShortDescription()).append("\n");
         assertEquals("Build causes should have all items, even duplicates",
                 "Started by user SYSTEM\nStarted by user SYSTEM\n"
                 + "Started by an SCM change\nStarted by an SCM change\nStarted by an SCM change\n"
