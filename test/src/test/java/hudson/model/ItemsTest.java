@@ -284,7 +284,7 @@ public class ItemsTest {
             }
         };
         abstract void run(JenkinsRule r, String target) throws Exception;
-        private static final JenkinsRule.WebClient wc(JenkinsRule r) throws Exception {
+        private static JenkinsRule.WebClient wc(JenkinsRule r) throws Exception {
             return r.createWebClient().withBasicApiToken("attacker");
         }
     }

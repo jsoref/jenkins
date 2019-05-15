@@ -199,7 +199,7 @@ public class HudsonPrivateSecurityRealmTest {
     }
 
 
-    private static final String basicHeader(String user, String pass) throws UnsupportedEncodingException {
+    private static String basicHeader(String user, String pass) throws UnsupportedEncodingException {
         String str = user +':' + pass;
         String auth = Base64.encode(str.getBytes("US-ASCII"));
         String authHeader = "Basic " + auth;

@@ -465,7 +465,7 @@ public class QuietDownCommandTest {
      * Asserts if Jenkins is in quiet mode.
      * Will retry for some time before actually failing.
      */
-    private final void assertJenkinsInQuietMode() {
+    private void assertJenkinsInQuietMode() {
         assertJenkinsInQuietMode(j);
     }
 
@@ -473,7 +473,7 @@ public class QuietDownCommandTest {
      * Asserts if Jenkins is <strong>not</strong> in quiet mode.
      * Will retry for some time before actually failing.
      */
-    private final void assertJenkinsNotInQuietMode() {
+    private void assertJenkinsNotInQuietMode() {
         assertJenkinsNotInQuietMode(j);
     }
 

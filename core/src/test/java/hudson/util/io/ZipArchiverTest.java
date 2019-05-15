@@ -171,7 +171,7 @@ public class ZipArchiverTest {
      * @param msg the failure description
      * @param cause the root cause of the failure
      */
-    private final void fail(final String msg, final Throwable cause) {
+    private void fail(final String msg, final Throwable cause) {
         LOGGER.log(Level.SEVERE, msg, cause);
         Assert.fail(msg);
     }
@@ -181,7 +181,7 @@ public class ZipArchiverTest {
      *
      * @param f the File (neé, directory) to delete
      */
-    private final void deleteDir(final File f) {
+    private void deleteDir(final File f) {
         for (File c : f.listFiles()) {
             if (c.isDirectory()) {
                 deleteDir(c);
