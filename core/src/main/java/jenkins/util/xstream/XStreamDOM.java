@@ -417,7 +417,7 @@ public class XStreamDOM {
             }
 
             XStreamDOM toDOM() {
-                return new XStreamDOM(tagName,attributes.toArray(new String[attributes.size()]),children,value);
+                return new XStreamDOM(tagName,attributes.toArray(new String[0]),children,value);
             }
         }
 

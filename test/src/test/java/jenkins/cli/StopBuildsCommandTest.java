@@ -167,7 +167,7 @@ public class StopBuildsCommandTest {
     private CLICommandInvoker.Result runWith(final List<String> jobNames) throws Exception {
         CLICommand cmd = new StopBuildsCommand();
         CLICommandInvoker invoker = new CLICommandInvoker(j, cmd);
-        return invoker.invokeWithArgs(jobNames.toArray(new String[jobNames.size()]));
+        return invoker.invokeWithArgs(jobNames.toArray(new String[0]));
     }
 
     private void setupAndAssertTwoBuildsStop(final List<String> inputNames) throws Exception {

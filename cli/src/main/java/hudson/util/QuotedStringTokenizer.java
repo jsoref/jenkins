@@ -132,7 +132,7 @@ public class QuotedStringTokenizer
         List<String> r = new ArrayList<>();
         while(hasMoreTokens())
             r.add(nextToken());
-        return r.toArray(new String[r.size()]);
+        return r.toArray(new String[0]);
     }
 
 

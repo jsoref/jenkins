@@ -184,7 +184,7 @@ public class SlaveTest {
         DescriptorExtensionList<ComputerLauncher, Descriptor<ComputerLauncher>> descriptors =
                 j.getInstance().getDescriptorList(ComputerLauncher.class);
         assumeThat("we need at least two launchers to test this", descriptors.size(), not(anyOf(is(0), is(1))));
-        assertThat(descriptor.computerLauncherDescriptors(null), containsInAnyOrder(descriptors.toArray(new Descriptor[descriptors.size()])));
+        assertThat(descriptor.computerLauncherDescriptors(null), containsInAnyOrder(descriptors.toArray(new Descriptor[0])));
 
         Descriptor<ComputerLauncher> victim = descriptors.iterator().next();
         assertThat(descriptor.computerLauncherDescriptors(null), hasItem(victim));
@@ -201,7 +201,7 @@ public class SlaveTest {
                 j.getInstance().getDescriptorByType(DumbSlave.DescriptorImpl.class);
         DescriptorExtensionList<RetentionStrategy<?>, Descriptor<RetentionStrategy<?>>> descriptors = RetentionStrategy.all();
         assumeThat("we need at least two retention strategies to test this", descriptors.size(), not(anyOf(is(0), is(1))));
-        assertThat(descriptor.retentionStrategyDescriptors(null), containsInAnyOrder(descriptors.toArray(new Descriptor[descriptors.size()])));
+        assertThat(descriptor.retentionStrategyDescriptors(null), containsInAnyOrder(descriptors.toArray(new Descriptor[0])));
 
         Descriptor<RetentionStrategy<?>> victim = descriptors.iterator().next();
         assertThat(descriptor.retentionStrategyDescriptors(null), hasItem(victim));
@@ -218,7 +218,7 @@ public class SlaveTest {
                 j.getInstance().getDescriptorByType(DumbSlave.DescriptorImpl.class);
         DescriptorExtensionList<NodeProperty<?>, NodePropertyDescriptor> descriptors = NodeProperty.all();
         assumeThat("we need at least two node properties to test this", descriptors.size(), not(anyOf(is(0), is(1))));
-        assertThat(descriptor.nodePropertyDescriptors(null), containsInAnyOrder(descriptors.toArray(new Descriptor[descriptors.size()])));
+        assertThat(descriptor.nodePropertyDescriptors(null), containsInAnyOrder(descriptors.toArray(new Descriptor[0])));
 
         NodePropertyDescriptor victim = descriptors.iterator().next();
         assertThat(descriptor.nodePropertyDescriptors(null), hasItem(victim));
