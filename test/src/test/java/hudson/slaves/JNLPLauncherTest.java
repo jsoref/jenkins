@@ -263,10 +263,10 @@ public class JNLPLauncherTest {
      * Adds a JNLP {@link Slave} to the system and returns it.
      */
     private Computer addTestSlave(ComputerLauncher launcher) throws Exception {
-        List<Node> slaves = new ArrayList<Node>(j.jenkins.getNodes());
+        List<Node> slaves = new ArrayList<>(j.jenkins.getNodes());
         File dir = Util.createTempDir();
         slaves.add(new DumbSlave("test","dummy",dir.getAbsolutePath(),"1", Mode.NORMAL, "",
-                launcher, RetentionStrategy.INSTANCE, new ArrayList<NodeProperty<?>>()));
+                launcher, RetentionStrategy.INSTANCE, new ArrayList<>()));
         j.jenkins.setNodes(slaves);
         Computer c = j.jenkins.getComputer("test");
         assertNotNull(c);

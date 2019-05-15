@@ -53,7 +53,7 @@ public class RepeatableTest extends HudsonTestCase {
     private JSONObject formData;
     private Class<?> bindClass;
     private List<?> bindResult;
-    public List<Object> list = new ArrayList<Object>();
+    public List<Object> list = new ArrayList<>();
     public List<Object> defaults = null;
     public Integer minimum = null;
 
@@ -205,7 +205,7 @@ public class RepeatableTest extends HudsonTestCase {
     }    
 
     private void addDefaults() {
-        defaults = new ArrayList<Object>();
+        defaults = new ArrayList<>();
         defaults.add(new Foo("default one", true));
         defaults.add(new Foo("default two", false));
     }

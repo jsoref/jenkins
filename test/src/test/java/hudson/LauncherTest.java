@@ -93,7 +93,7 @@ public class LauncherTest {
     @Issue("JENKINS-19926")
     @Test
     public void overwriteSystemEnvVars() throws Exception {
-        Map<String, String> env = new HashMap<String,String>();
+        Map<String, String> env = new HashMap<>();
         env.put("jenkins_19926", "original value");
         Slave slave = rule.createSlave(new EnvVars(env));
         

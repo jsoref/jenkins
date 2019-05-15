@@ -173,7 +173,7 @@ public class RunIdMigratorTest {
     }
     private static String summarize(File dir) throws Exception {
         File[] kids = dir.listFiles();
-        Map<String,String> m = new TreeMap<String,String>();
+        Map<String,String> m = new TreeMap<>();
         for (File kid : kids) {
             String notation;
             String symlink = Util.resolveSymlink(kid);

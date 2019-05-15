@@ -422,7 +422,7 @@ public class HudsonPrivateSecurityRealmTest {
     @TestExtension
     public static class SpySecurityListenerImpl extends SecurityListener {
         private List<String> loggedInUsernames = new ArrayList<>();
-        private List<String> createdUsers = new ArrayList<String>();
+        private List<String> createdUsers = new ArrayList<>();
 
         @Override
         protected void loggedIn(@Nonnull String username) {
