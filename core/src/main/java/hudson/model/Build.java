@@ -176,7 +176,8 @@ public abstract class Build <P extends Project<P,B>,B extends Build<P,B>>
                     }                    
                 }
                 // WARNING The return in the finally clause will trump any return before
-                if (failed) return FAILURE;
+                if (failed) //noinspection ReturnInsideFinallyBlock
+                    return FAILURE;
             }
 
             return r;
