@@ -100,7 +100,7 @@ public class ZipArchiverTest {
         File hugeFile = new File(tmpDir, "huge64bitFileTest.txt");
         try {
             RandomAccessFile largeFile = new RandomAccessFile(hugeFile, "rw");
-            largeFile.setLength(4 * 1024 * 1024 * 1024 + 2);
+            largeFile.setLength(4L * 1024 * 1024 * 1024 + 2);
         } catch (IOException e) {
             /* We probably don't have enough free disk space
              * That's ok, we'll skip this test...
