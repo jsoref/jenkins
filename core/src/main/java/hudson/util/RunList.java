@@ -36,6 +36,8 @@ import hudson.model.View;
 import hudson.util.Iterators.CountingPredicate;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * {@link List} of {@link Run}s, sorted in the descending date order.
@@ -208,7 +210,7 @@ public class RunList<R extends Run> extends AbstractList<R> {
     public RunList<R> filter(Predicate<R> predicate) {
         size = null;
         first = null;
-        base = Iterables.filter(base,predicate);
+        base = StreamSupport.stream(base.spliterator(), false).filter(predicate::apply).collect(Collectors.toList());
         return this;
     }
 
