@@ -52,6 +52,7 @@ public class UpdateCenter2Test {
         UpdateSite.Plugin plugin = j.jenkins.getUpdateCenter().getPlugin("changelog-history");
         assumeNotNull(plugin);
         DownloadJob job = (DownloadJob) plugin.deploy().get(); // this seems like one of the smallest plugin
+        //noinspection ThrowablePrintedToSystemOut
         System.out.println(job.status);
         assertTrue(job.status instanceof Success);
     }
