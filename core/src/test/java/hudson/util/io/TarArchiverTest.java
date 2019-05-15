@@ -168,6 +168,6 @@ public class TarArchiverTest {
                 throw ex;
             }
         }
-    };
+    }
 
 }

@@ -114,7 +114,7 @@ public class ProcStarterTest {
         @Extension
         public static class DescriptorImpl extends TestWrapperDescriptor {
         }
-    };
+    }
 
     /**
      * A wrapper, which decorates launchers.
@@ -143,8 +143,8 @@ public class ProcStarterTest {
         @Extension
         public static class DescriptorImpl extends TestWrapperDescriptor {
         }
-    };
-    
+    }
+
     public static class EchoBuilder extends Builder {
 
         @Override
@@ -164,5 +164,5 @@ public class ProcStarterTest {
                 return true;
             }
         }
-    };
+    }
 }
