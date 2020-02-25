@@ -50,3 +50,4 @@ SUMS$
 \.zip$
 ^excludes\.txt$
 ^whitelist\.txt$
+_[a-z]{2}(?:_[A-Z]{2}|)\.(?:properties|html)$
