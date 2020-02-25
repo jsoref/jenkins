@@ -1,6 +1,7 @@
 (?:^|/)go\.mod$
 (?:^|/)go\.sum$
 (?:^|/)package-lock\.json$
+(?:^|/)yarn\.lock$
 SUMS$
 \.ai$
 \.bmp$
