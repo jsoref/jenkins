@@ -7,7 +7,7 @@ import jenkins.model.ModifiableTopLevelItemGroup;
 
 class CreateJobHelper {
     public CreateJobHelper(String name) {
-        Jenkins jenkins = Jenkins.getActiveInstance();
+        Jenkins jenkins = Jenkins.get();
 
         if (jenkins.getItemByFullName(name)!=null) {
             throw new IllegalStateException("Job '"+name+"' already exists");
