@@ -72,6 +72,7 @@ final class ZipArchiver extends Archiver {
             ZipEntry fileZipEntry = new ZipEntry(relativePath);
             if (mode!=-1)   fileZipEntry.setUnixMode(mode);
             fileZipEntry.setTime(f.lastModified());
+            fileZipEntry.setSize(f.length());
             zip.putNextEntry(fileZipEntry);
             try (InputStream in = Files.newInputStream(f.toPath())) {
                 int len;
